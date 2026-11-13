@@ -24,15 +24,22 @@ Atualizado em: 13/11/2026
 - Ajustes de teste: 404 em streaming retorna HTTP 200 (verifica a tela "Página não encontrada" e ausência de dados);
   seletores por papel (o route announcer do Next duplica títulos); sidebar oculta no mobile; 1 worker com banco real.
 
+## Produção (Vercel) — 13/11/2026
+- GitHub: https://github.com/teuprates/MOVIX (branch `main`). Deploy: https://movix-three-inky.vercel.app
+- A Vercel usa `SUPABASE_URL`/`SUPABASE_PUBLISHABLE_KEY`/`SITE_URL` sem prefixo; `next.config.ts` mapeia apenas esses
+  valores públicos para `NEXT_PUBLIC_*` (a chave secreta nunca é mapeada; o app não a usa).
+- `E2E_SUPABASE=1 E2E_BASE_URL=https://movix-three-inky.vercel.app npx playwright test` → **51/51 passando**
+  (36 públicos + 15 autenticados; 1 pulado por ser só mobile). Seed reaplicado depois.
+
 ## Implementado, ainda sem validação automatizada
 Uploads de storage, e-mails de verificação, assistente com IA (sem `ANTHROPIC_API_KEY`, usa o roteiro).
 
-## Bloqueios (dependem do usuário)
-1. Auth → Redirect URLs (`http://localhost:3000/auth/callback`).
-2. `git push -u origin main` com autenticação do GitHub; projeto Vercel.
+## Pendências (dependem do usuário)
+1. Supabase → Auth → URL Configuration: Site URL `https://movix-three-inky.vercel.app` e Redirect URLs
+   `https://movix-three-inky.vercel.app/auth/callback` e `http://localhost:3000/auth/callback`.
+2. Vercel: remover `SUPABASE_SECRET_KEY` e `SEED_USER_PASSWORD` (não usados em produção).
 3. Opcional: `ANTHROPIC_API_KEY`.
 
 ## Próximos passos
 1. Validar manualmente uploads de fotos/documentos e e-mail de verificação.
 2. Gravar capturas/vídeo para o plano B da banca.
-3. Publicar no GitHub e Vercel.

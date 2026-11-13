@@ -62,3 +62,6 @@ Formato: **ID — decisão** · motivo · consequência.
 - **D-022 — Busca Ctrl K e tabela ordenável no cliente.** `CommandMenu` (dialog nativo) indexa páginas, ações, veículos e
   contratos já autorizados pela RLS no layout; `DataTable` ordena e filtra localmente linhas renderizadas no servidor
   (volumes de pequena frota). Filtros de status por URL continuam no servidor.
+- **D-023 — Mapa base da OpenFreeMap no rastreamento.** Os tiles raster da CARTO foram trocados pelo estilo vetorial
+  gratuito e sem chave da OpenFreeMap (`positron` no tema claro, `dark` no escuro), renderizado pelo MapLibre GL como camada
+  do Leaflet (`@maplibre/maplibre-gl-leaflet`). Rotas, geofence e marcadores simulados continuam em react-leaflet.

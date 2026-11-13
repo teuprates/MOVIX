@@ -14,9 +14,11 @@ Atualizado em: 13/11/2026
 | Inspeção visual | capturas de landing, narrativa, demo, login e mobile revisadas |
 
 ## Supabase real (13/11/2026)
-- Migrations 0001–0005 aplicadas pelo SQL Editor; `npm run seed` OK (2 locadoras demo, 10 veículos, 15 locações).
-- `E2E_SUPABASE=1` → jornadas autenticadas: **13 passando**, 1 pulado (só mobile), **2 falhando** ("convidado pendente", desktop e mobile)
-  até aplicar a migration `0006_fix_org_select.sql` no projeto.
+- Migrations 0001–0006 aplicadas pelo SQL Editor; `npm run seed` OK (2 locadoras demo, 10 veículos, 15 locações).
+- `E2E_SUPABASE=1` → jornadas autenticadas: **15/15 passando** (1 pulado por ser só mobile): dashboard/frota/financeiro/
+  relatórios, isolamento entre locadoras, locatário com duas locadoras + aceite + pagamento simulado, chassi restrito,
+  pendente com acesso restrito, concorrência real de reservas, admin/negações/`/demo`, navegação mobile.
+- E2E públicos seguem **36/36**.
 - Bug real encontrado pelo E2E e corrigido: policy `organizations_select` com `id` ambíguo (resolvia para
   `organization_memberships.id`); locatário pendente não via o nome da locadora. Teste de regressão em `tests/db/security.test.ts`.
 - Ajustes de teste: 404 em streaming retorna HTTP 200 (verifica a tela "Página não encontrada" e ausência de dados);
@@ -26,12 +28,11 @@ Atualizado em: 13/11/2026
 Uploads de storage, e-mails de verificação, assistente com IA (sem `ANTHROPIC_API_KEY`, usa o roteiro).
 
 ## Bloqueios (dependem do usuário)
-1. Executar `supabase/migrations/20261113000006_fix_org_select.sql` no SQL Editor.
-2. Auth → Redirect URLs (`http://localhost:3000/auth/callback`).
-3. `git push -u origin main` com autenticação do GitHub; projeto Vercel.
-4. Opcional: `ANTHROPIC_API_KEY`.
+1. Auth → Redirect URLs (`http://localhost:3000/auth/callback`).
+2. `git push -u origin main` com autenticação do GitHub; projeto Vercel.
+3. Opcional: `ANTHROPIC_API_KEY`.
 
 ## Próximos passos
-1. Após a 0006: rodar de novo `E2E_SUPABASE=1 npx playwright test tests/e2e/authenticated.spec.ts`.
+1. Validar manualmente uploads de fotos/documentos e e-mail de verificação.
 2. Gravar capturas/vídeo para o plano B da banca.
 3. Publicar no GitHub e Vercel.

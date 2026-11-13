@@ -49,7 +49,7 @@ export default async function DemoPage() {
           Os atalhos abaixo atuam somente sobre locadoras marcadas como demonstração (verificado no servidor e no banco). Nenhuma outra locadora é afetada.
         </Callout>
         {demoOrgs.length > 0 && (
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {demoOrgs.map((m) => (
               <div key={m.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-4">
                 <div><p className="font-semibold">{m.organization.name}</p><p className="text-xs text-muted">Locadora demo</p></div>

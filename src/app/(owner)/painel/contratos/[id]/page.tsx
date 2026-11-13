@@ -31,7 +31,7 @@ export default async function ContractPage({ params }: PageProps<"/painel/contra
     <>
       <Link href="/painel/contratos" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-fg"><ChevronLeft className="size-4" /> Contratos</Link>
       <PageHeader
-        eyebrow={r.code}
+        meta={r.code}
         title={`${r.vehicle.brand} ${r.vehicle.model} · ${r.renter?.full_name ?? "Locatário"}`}
         description={`${date(r.start_date)} a ${date(r.end_date)} · ${MODALITY_LABEL[r.modality]}`}
         actions={
@@ -49,7 +49,7 @@ export default async function ContractPage({ params }: PageProps<"/painel/contra
           </>
         }
       />
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
           <Card>
             <CardHeader title="Quadro-resumo" />

@@ -10,6 +10,7 @@ import { InstallmentsCard, VersionsCard } from "@/features/contracts/contract-vi
 import { AcceptPanel } from "@/features/contracts/accept-panel";
 import { FineStatusBadge, InspectionStatusBadge, RentalStatusBadge } from "@/components/status-badges";
 import { Card, CardBody, CardHeader, DefinitionList, buttonClass } from "@/components/ui/primitives";
+import { VehicleArt } from "@/components/vehicle-art";
 
 export const metadata = { title: "Locação" };
 
@@ -33,13 +34,16 @@ export default async function RenterRentalPage({ params }: PageProps<"/app/locac
   return (
     <div className="space-y-5">
       <Link href="/app" className="inline-flex items-center gap-1 text-sm text-muted hover:text-fg"><ChevronLeft className="size-4" /> Início</Link>
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-brand">{r.code}</p>
-          <h1 className="font-display text-2xl font-semibold">{r.vehicle.brand} {r.vehicle.model}</h1>
-          <p className="text-sm text-muted">{date(r.start_date)} a {date(r.end_date)} · {MODALITY_LABEL[r.modality]} · {brl(r.total_amount)}</p>
+      <header className="flex items-center gap-4 overflow-hidden rounded-2xl bg-rail p-4 text-rail-fg ring-1 ring-rail-border sm:p-5">
+        <div className="w-28 shrink-0 sm:w-40"><VehicleArt model={r.vehicle.model} color={r.vehicle.color} /></div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="font-display text-xl font-semibold text-white sm:text-2xl">{r.vehicle.brand} {r.vehicle.model}</h1>
+            <RentalStatusBadge status={r.status} />
+          </div>
+          <p className="mt-1 text-sm text-rail-muted">{date(r.start_date)} a {date(r.end_date)} · {MODALITY_LABEL[r.modality]} · <span className="font-medium text-rail-fg">{brl(r.total_amount)}</span></p>
+          <p className="mt-1 font-mono text-xs text-rail-muted">{r.code}</p>
         </div>
-        <RentalStatusBadge status={r.status} />
       </header>
 
       {needsAccept && current && <AcceptPanel versionId={current.id} rentalId={r.id} version={current.version} clauses={current.clauses} total={Number(r.total_amount)} hash={current.content_hash} />}
@@ -64,7 +68,7 @@ export default async function RenterRentalPage({ params }: PageProps<"/app/locac
 
       {installments.length > 0 && <InstallmentsCard installments={installments} today={todayIso()} canPay={r.status === "active" || r.status === "completed"} path={`/app/locacoes/${r.id}`} />}
 
-      <Card>
+      <Card id="vistorias" className="scroll-mt-20">
         <CardHeader title="Vistorias" />
         <CardBody>
           <ul className="space-y-2 text-sm">

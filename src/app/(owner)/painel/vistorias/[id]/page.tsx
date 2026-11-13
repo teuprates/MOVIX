@@ -24,7 +24,7 @@ export default async function InspectionPage({ params }: PageProps<"/painel/vist
     <>
       <Link href="/painel/vistorias" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-fg"><ChevronLeft className="size-4" /> Vistorias</Link>
       <PageHeader
-        eyebrow={insp.rental.code}
+        meta={insp.rental.code}
         title={`Vistoria de ${INSPECTION_KIND[insp.kind].toLowerCase()} · ${insp.rental.vehicle.brand} ${insp.rental.vehicle.model}`}
         description={`Enviada por ${insp.submitter?.full_name ?? "locatário"} em ${dateTime(insp.submitted_at)}`}
         actions={

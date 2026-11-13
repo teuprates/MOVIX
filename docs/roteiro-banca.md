@@ -25,4 +25,4 @@
 ## Plano B (sem internet)
 - Rodar local (`npm start`): landing e demo pública funcionam sem rede (exceto tiles do mapa e fontes, que caem para fundo neutro e fonte do sistema).
 - Áreas autenticadas exigem o Supabase na nuvem: se a rede falhar, conduzir pela demo pública e pelos testes automatizados (`npm test` roda offline).
-- Capturas/vídeo: ainda **não produzidos** — gravar após configurar o Supabase.
+- Capturas: `docs/capturas/depois` (desktop e celular, claro e escuro; gere de novo com `scripts/capturas.mjs`). Vídeo: ainda não gravado.

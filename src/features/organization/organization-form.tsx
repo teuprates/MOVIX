@@ -18,13 +18,13 @@ export function OrganizationForm({ action, defaults = {}, submitLabel, hasLogo }
   const [secondary, setSecondary] = useState(d("secondary_color") || "#00D1FF");
   return (
     <ActionForm action={action} className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <TextField label="Nome da locadora" name="name" defaultValue={d("name")} required className="sm:col-span-2" />
         <MaskedField mask="document" label="CPF ou CNPJ" name="document" defaultValue={d("document")} required />
         <MaskedField mask="phone" label="Telefone comercial" name="phone" defaultValue={d("phone")} required />
         <TextField label="E-mail comercial" name="email" type="email" defaultValue={d("email")} className="sm:col-span-2" />
       </div>
-      <fieldset className="grid gap-4 sm:grid-cols-6">
+      <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-6">
         <legend className="mb-2 text-sm font-semibold text-muted">Endereço</legend>
         <MaskedField mask="cep" label="CEP" name="address_zip" defaultValue={d("address_zip")} className="sm:col-span-2" />
         <TextField label="Logradouro" name="address_street" defaultValue={d("address_street")} className="sm:col-span-4" />

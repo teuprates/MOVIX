@@ -44,7 +44,7 @@ export default async function MaintenancePage({ searchParams }: PageProps<"/pain
           </>
         }
       />
-      <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {(vehicles ?? []).map((v) => (
           <Link key={v.id} href={`?veiculo=${v.id}`} className={`rounded-xl border p-3 transition hover:border-primary ${vehicleFilter === v.id ? "border-primary bg-primary-soft" : "border-border bg-surface"}`}>
             <div className="flex items-center justify-between gap-2">

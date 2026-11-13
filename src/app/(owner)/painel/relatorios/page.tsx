@@ -20,7 +20,7 @@ export default async function ReportsPage({ searchParams }: PageProps<"/painel/r
       <Callout tone="info" icon={ShieldCheck} className="mb-5">
         Os arquivos são gerados no servidor com a sua sessão: contêm somente dados de <strong>{org.name}</strong> autorizados pela RLS.
       </Callout>
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <Card>
           <CardHeader title="Prévia do período" />
           <CardBody>

@@ -10,9 +10,9 @@ import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { switchOrganization } from "@/features/memberships/actions";
 
-export type NavItem = { href: string; label: string; icon: keyof typeof ICONS; badge?: number };
+export type NavItem = { href: string; label: string; icon: keyof typeof ICONS; badge?: number; group?: string };
 
-const ICONS = {
+export const ICONS = {
   dashboard: LayoutDashboard, car: Car, calendar: CalendarDays, users: Users, contract: FileSignature, money: BarChart3,
   inspection: ClipboardCheck, wrench: Wrench, alert: AlertTriangle, receipt: Receipt, map: Map, report: FileText,
   bell: Bell, settings: Settings, demo: Presentation, gauge: Gauge,
@@ -22,32 +22,52 @@ export function isActive(pathname: string, href: string, exact?: boolean) {
   return exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 }
 
+/** Navegação do trilho azul-noite, agrupada por área de trabalho. */
 export function SidebarNav({ items, rootHref }: { items: NavItem[]; rootHref: string }) {
   const pathname = usePathname();
+  const groups: { name: string; items: NavItem[] }[] = [];
+  for (const item of items) {
+    const name = item.group ?? "";
+    const g = groups.find((x) => x.name === name);
+    if (g) g.items.push(item);
+    else groups.push({ name, items: [item] });
+  }
   return (
-    <nav aria-label="Navegação principal" className="flex flex-col gap-0.5">
-      {items.map((item) => {
-        const Icon = ICONS[item.icon];
-        const active = isActive(pathname, item.href, item.href === rootHref);
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            aria-current={active ? "page" : undefined}
-            className={cn(
-              "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition",
-              active ? "bg-primary-soft text-fg" : "text-muted hover:bg-surface-2 hover:text-fg",
-            )}
-          >
-            {active && <span aria-hidden className="absolute inset-y-1.5 left-0 w-1 rounded-full bg-brand" />}
-            <Icon className={cn("size-4 shrink-0", active ? "text-brand" : "")} aria-hidden />
-            <span className="flex-1 truncate">{item.label}</span>
-            {item.badge ? (
-              <span className="rounded-full bg-primary px-1.5 text-[10px] font-semibold leading-4 text-white">{item.badge > 99 ? "99+" : item.badge}</span>
-            ) : null}
-          </Link>
-        );
-      })}
+    <nav aria-label="Navegação principal" className="flex flex-col gap-5">
+      {groups.map((g) => (
+        <div key={g.name || "root"}>
+          {g.name && <p className="mb-1.5 px-3 text-[0.6875rem] font-medium text-rail-muted/80">{g.name}</p>}
+          <ul className="flex flex-col gap-0.5">
+            {g.items.map((item) => {
+              const Icon = ICONS[item.icon];
+              const active = isActive(pathname, item.href, item.href === rootHref);
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "group relative flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors duration-150",
+                      "focus-visible:outline-rail-accent",
+                      active ? "bg-rail-3 text-white" : "text-rail-muted hover:bg-rail-2 hover:text-rail-fg",
+                    )}
+                  >
+                    {active && <span aria-hidden className="absolute inset-y-2 -left-3 w-[3px] rounded-r-full bg-[#2f74ff]" />}
+                    <Icon className={cn("size-4 shrink-0 transition-colors", active ? "text-rail-accent" : "text-rail-muted group-hover:text-rail-fg")} aria-hidden />
+                    <span className="flex-1 truncate">{item.label}</span>
+                    {item.badge ? (
+                      <span className="min-w-5 rounded-full bg-[#2f74ff] px-1.5 text-center text-[0.6875rem] font-semibold leading-5 text-white tabular-nums">
+                        {item.badge > 99 ? "99+" : item.badge}
+                        <span className="sr-only"> pendente(s)</span>
+                      </span>
+                    ) : null}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
     </nav>
   );
 }
@@ -63,18 +83,22 @@ export function MobileDrawer({ children, label = "Abrir menu" }: { children: Rea
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
   }, [open]);
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className="grid size-9 place-items-center rounded-lg text-muted hover:bg-surface-2 hover:text-fg lg:hidden" aria-label={label} aria-expanded={open}>
+      <button type="button" onClick={() => setOpen(true)} className="grid size-9 place-items-center rounded-lg text-muted transition-colors hover:bg-surface-2 hover:text-fg lg:hidden" aria-label={label} aria-expanded={open}>
         <Menu className="size-5" />
       </button>
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <div className="absolute inset-y-0 left-0 flex w-[min(85vw,18rem)] flex-col overflow-y-auto border-r border-border bg-surface p-4">
-            <button type="button" onClick={() => setOpen(false)} className="mb-2 ml-auto grid size-9 place-items-center rounded-lg text-muted hover:bg-surface-2" aria-label="Fechar menu">
+          <div className="absolute inset-0 bg-[#02040a]/70 backdrop-blur-[2px]" onClick={() => setOpen(false)} />
+          <div className="animate-pop absolute inset-y-0 left-0 flex w-[min(86vw,17.5rem)] flex-col overflow-y-auto bg-rail p-3 text-rail-fg shadow-pop">
+            <button type="button" onClick={() => setOpen(false)} className="absolute right-3 top-3.5 grid size-8 place-items-center rounded-lg text-rail-muted hover:bg-rail-2 hover:text-rail-fg" aria-label="Fechar menu">
               <X className="size-5" />
             </button>
             {children}
@@ -85,12 +109,12 @@ export function MobileDrawer({ children, label = "Abrir menu" }: { children: Rea
   );
 }
 
-export function OrgSwitcher({ orgs, activeId, area }: { orgs: { id: string; name: string }[]; activeId: string | null; area: "owner" | "renter" }) {
+export function OrgSwitcher({ orgs, activeId, area, className }: { orgs: { id: string; name: string }[]; activeId: string | null; area: "owner" | "renter"; className?: string }) {
   const [pending, start] = useTransition();
   if (orgs.length <= 1) return null;
   return (
-    <label className="flex flex-col gap-1 text-xs text-muted">
-      <span className="sr-only sm:not-sr-only">Locadora ativa</span>
+    <label className={cn("relative flex items-center", className)}>
+      <span className="sr-only">Locadora ativa</span>
       <select
         value={activeId ?? ""}
         disabled={pending}
@@ -102,7 +126,7 @@ export function OrgSwitcher({ orgs, activeId, area }: { orgs: { id: string; name
             else window.location.assign(res.redirectTo ?? "/inicio");
           })
         }
-        className="h-9 max-w-[14rem] rounded-lg border border-border bg-surface-2 px-2 text-sm text-fg"
+        className="h-9 w-full max-w-[11rem] truncate rounded-lg border border-border bg-surface px-2.5 text-sm font-medium text-fg shadow-sm transition-colors hover:border-border-strong sm:max-w-[14rem]"
       >
         {orgs.map((o) => (
           <option key={o.id} value={o.id}>

@@ -55,3 +55,10 @@ Formato: **ID — decisão** · motivo · consequência.
   pendente/aprovado ou histórico de locação na sua locadora; recusados deixam de ser visíveis.
 - **D-020 — Assistente com Claude Opus 5.5 (`claude-opus-5-5`), esforço `low`, fallback server-side de recusa
   (`fallbacks: "default"`).** Contexto mínimo (sem CPF/CNH), rate limit 12/min e retorno ao roteiro em qualquer falha.
+- **D-021 — Redesign dos painéis (DESIGN.md v2) guiado pelo Impeccable (modo Operate).** Trilho azul-noite nos dois temas,
+  Inter na interface e Sora só em títulos/números de destaque, sem eyebrows, "pulso da frota" como assinatura do proprietário
+  e cartão do veículo (foto real ou ilustração vetorial tingida pela cor cadastrada) no app do locatário. `PageHeader.eyebrow`
+  virou `meta` (identificador ao lado do título). Regras de negócio, consultas com RLS e rotas inalteradas.
+- **D-022 — Busca Ctrl K e tabela ordenável no cliente.** `CommandMenu` (dialog nativo) indexa páginas, ações, veículos e
+  contratos já autorizados pela RLS no layout; `DataTable` ordena e filtra localmente linhas renderizadas no servidor
+  (volumes de pequena frota). Filtros de status por URL continuam no servidor.

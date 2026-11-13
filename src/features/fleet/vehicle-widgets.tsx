@@ -40,7 +40,7 @@ export function PhotoGallery({ vehicleId, photos }: { vehicleId: string; photos:
 
 export function BlockForm({ vehicles, defaultVehicleId }: { vehicles: { id: string; label: string }[]; defaultVehicleId?: string }) {
   return (
-    <ActionForm action={createBlock} resetOnSuccess className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_2fr_auto] lg:items-end">
+    <ActionForm action={createBlock} resetOnSuccess className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_2fr_auto] lg:items-end">
       {defaultVehicleId ? (
         <input type="hidden" name="vehicle_id" value={defaultVehicleId} />
       ) : (

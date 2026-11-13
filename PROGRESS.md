@@ -40,6 +40,16 @@ Atualizado em: 13/11/2026
   (pré-visualização mínima do convite).
 - "Leaked password protection" do Auth está desligado (configuração do painel; disponível no plano Pro).
 
+## Redesign dos painéis (13/11/2026)
+- Diretrizes do Impeccable lidas do repositório oficial (SKILL, modo Operate, craft floor, layout, tipografia, cor, movimento);
+  o plugin em si depende de `/plugin marketplace add pbakaus/impeccable` no Claude Code (ver resposta da sessão).
+- Novos componentes: trilho agrupado, busca Ctrl K, menu "Novo", `FleetPulse`, `VehicleArt`, `RentalHero`, `DataTable`,
+  `MetricStrip`/`Metric`, skeleton do locatário. Painel do proprietário e app do locatário reescritos; contratos com busca e
+  ordenação; financeiro/multas com faixa de indicadores; frota com ilustração quando não há foto.
+- Verificação: lint/typecheck OK, Vitest 50/50, build OK, Playwright **51/51** (36 públicos + 15 autenticados, Supabase real),
+  `scripts/verificar-responsivo.mjs` sem rolagem horizontal em 13 páginas × 320/390/768/1024/1280px, Ctrl K/Esc/Tab com foco
+  visível. Capturas antes/depois em `docs/capturas/antes` e `docs/capturas/depois` (`scripts/capturas.mjs`).
+
 ## Implementado, ainda sem validação automatizada
 Uploads de storage, e-mails de verificação, assistente com IA (sem `ANTHROPIC_API_KEY`, usa o roteiro).
 
@@ -49,4 +59,4 @@ Uploads de storage, e-mails de verificação, assistente com IA (sem `ANTHROPIC_
 
 ## Próximos passos
 1. Validar manualmente uploads de fotos/documentos e e-mail de verificação.
-2. Gravar capturas/vídeo para o plano B da banca.
+2. Gravar vídeo para o plano B da banca (capturas já em docs/capturas/depois).

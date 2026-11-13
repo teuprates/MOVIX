@@ -6,6 +6,7 @@ import { brl, num } from "@/lib/format";
 import { VEHICLE_STATUS } from "@/lib/labels";
 import { coverPhotos, healthByVehicle, type VehicleRow } from "@/features/fleet/queries";
 import { HealthBadge, VehicleStatusBadge } from "@/components/status-badges";
+import { VehicleArt } from "@/components/vehicle-art";
 import { ButtonLink, Card, EmptyState, Input, PageHeader, Select, buttonClass } from "@/components/ui/primitives";
 
 export const metadata: Metadata = { title: "Frota" };
@@ -35,7 +36,7 @@ export default async function FleetPage({ searchParams }: PageProps<"/painel/fro
         actions={<ButtonLink href="/painel/frota/novo"><Plus className="size-4" /> Novo veículo</ButtonLink>}
       />
       <form className="mb-5 flex flex-wrap gap-2" role="search">
-        <div className="relative min-w-0 flex-1 sm:max-w-xs">
+        <div className="relative min-w-0 basis-full sm:basis-auto sm:flex-1 sm:max-w-xs">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-subtle" aria-hidden />
           <Input name="q" defaultValue={q} placeholder="Buscar marca, modelo ou placa" aria-label="Buscar veículos" className="pl-9" />
         </div>
@@ -56,7 +57,7 @@ export default async function FleetPage({ searchParams }: PageProps<"/painel/fro
           action={!q && !status && <ButtonLink href="/painel/frota/novo"><Plus className="size-4" /> Cadastrar veículo</ButtonLink>}
         />
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {vehicles.map((v) => (
             <li key={v.id}>
               <Card className="group overflow-hidden transition hover:border-primary/50">
@@ -66,7 +67,7 @@ export default async function FleetPage({ searchParams }: PageProps<"/painel/fro
                       // eslint-disable-next-line @next/next/no-img-element -- URL assinada temporária
                       <img src={photos[v.id]} alt={`${v.brand} ${v.model}`} className="size-full object-cover transition group-hover:scale-[1.02]" loading="lazy" />
                     ) : (
-                      <div className="grid size-full place-items-center text-subtle"><Car className="size-10" aria-hidden /></div>
+                      <div className="grid size-full place-items-center bg-rail px-8"><VehicleArt model={v.model} color={v.color} /></div>
                     )}
                     <div className="absolute left-3 top-3"><VehicleStatusBadge status={v.status} /></div>
                     {health[v.id] && <div className="absolute right-3 top-3"><HealthBadge score={health[v.id].score} /></div>}

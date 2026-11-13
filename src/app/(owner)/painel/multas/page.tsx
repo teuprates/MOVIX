@@ -5,7 +5,7 @@ import { FineFormButton } from "@/features/operations/forms";
 import { updateFineStatus } from "@/features/operations/actions";
 import { FineStatusBadge } from "@/components/status-badges";
 import { ConfirmAction } from "@/components/ui/dialog";
-import { Card, EmptyState, PageHeader, StatCard, Table, Td, Th } from "@/components/ui/primitives";
+import { Card, EmptyState, MetricStrip, PageHeader, Table, Td, Th } from "@/components/ui/primitives";
 
 export const metadata = { title: "Multas" };
 
@@ -32,11 +32,14 @@ export default async function FinesPage() {
           />
         }
       />
-      <div className="mb-5 grid gap-3 sm:grid-cols-3">
-        <StatCard label="Multas registradas" value={list.length} icon={Receipt} />
-        <StatCard label="Pendentes" value={brl(pending)} tone="warning" />
-        <StatCard label="Transferidas ao locatário" value={list.filter((f) => f.status === "transferred").length} tone="info" />
-      </div>
+      <MetricStrip
+        className="mb-5"
+        items={[
+          { label: "Multas registradas", value: list.length, icon: Receipt },
+          { label: "Pendentes", value: brl(pending), tone: pending > 0 ? "warning" : undefined },
+          { label: "Transferidas ao locatário", value: list.filter((f) => f.status === "transferred").length },
+        ]}
+      />
       {list.length === 0 ? (
         <EmptyState icon={Receipt} title="Nenhuma multa" description="Registre infrações para vincular ao veículo e ao contrato do período." />
       ) : (

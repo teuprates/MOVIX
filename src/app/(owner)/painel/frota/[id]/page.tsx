@@ -37,7 +37,7 @@ export default async function VehiclePage({ params }: PageProps<"/painel/frota/[
     <>
       <Link href="/painel/frota" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-fg"><ChevronLeft className="size-4" /> Frota</Link>
       <PageHeader
-        eyebrow={`${vehicle.plate.slice(0, 3)}-${vehicle.plate.slice(3)}`}
+        meta={`${vehicle.plate.slice(0, 3)}-${vehicle.plate.slice(3)}`}
         title={`${vehicle.brand} ${vehicle.model}`}
         description={`${vehicle.version ?? ""} ${vehicle.year} · ${num(vehicle.mileage)} km`}
         actions={
@@ -57,7 +57,7 @@ export default async function VehiclePage({ params }: PageProps<"/painel/frota/[
         }
       />
 
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
           <Card>
             <CardHeader title="Fotos" />

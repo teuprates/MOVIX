@@ -19,7 +19,7 @@ export function InspectionForm({ rentalId, kind, supersedesId, minMileage }: { r
       </Callout>
       <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="mb-3 font-display font-semibold">Fotos obrigatórias</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {(["front", "back", "left", "right", "interior"] as const).map((a) => (
             <FileField key={a} name={`photo_${a}`} label={INSPECTION_ANGLES[a]} accept="image/jpeg,image/png,image/webp" capture="environment" required maxMb={8} hint="JPG/PNG/WEBP até 8 MB" />
           ))}

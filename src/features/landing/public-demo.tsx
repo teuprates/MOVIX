@@ -76,11 +76,11 @@ export function PublicDemo() {
               <StatCard label="Receita do mês" value={brl(monthRevenue)} icon={Wallet} tone="success" hint={<SimulatedBadge>simulado</SimulatedBadge>} />
               <StatCard label="A receber" value={brl(receivable)} icon={CreditCard} tone="warning" />
             </div>
-            <div className="grid gap-5 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
               <Card className="lg:col-span-2"><CardHeader title="Receitas × despesas" /><CardBody><RevenueExpenseChart data={months} /></CardBody></Card>
               <Card><CardHeader title="Insights por regras" description="Sem IA preditiva" /><CardBody><InsightList insights={insights.slice(0, 4)} /></CardBody></Card>
             </div>
-            <div className="grid gap-5 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               <Card>
                 <CardHeader title="Alertas" />
                 <ul className="divide-y divide-border">
@@ -95,7 +95,7 @@ export function PublicDemo() {
         )}
 
         {tab === "frota" && (
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {DEMO_VEHICLES.map((v) => (
               <li key={v.id}>
                 <Card className="p-4">
@@ -120,7 +120,7 @@ export function PublicDemo() {
         )}
 
         {tab === "financeiro" && (
-          <div className="grid gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <Card className="lg:col-span-2"><CardHeader title="Receitas × despesas (6 meses)" /><CardBody><RevenueExpenseChart data={months} height={300} /></CardBody></Card>
             <Card>
               <CardHeader title="Lucro estimado por veículo" />

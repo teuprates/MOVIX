@@ -63,7 +63,7 @@ export default function LandingPage() {
                 <span className="rounded-full border border-dashed border-warning/60 bg-warning/10 px-2 py-0.5 font-semibold uppercase text-warning">Dados fictícios</span>
                 <span className="text-muted">Horizonte Locações · visão geral</span>
               </div>
-              <div className="grid gap-5 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
                 <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-4 lg:col-span-2">
                   <p className="text-sm font-medium">Receitas nos últimos 6 meses</p>
                   <div className="mt-4 flex h-40 items-end gap-3">

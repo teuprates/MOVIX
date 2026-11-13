@@ -53,7 +53,7 @@ export function RenterProfileForm({
     <ActionForm action={action} className="space-y-5">
       <Section title="Dados pessoais">
         <TextField label="Nome completo" name="full_name" defaultValue={d("full_name")} autoComplete="name" required />
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <MaskedField mask="cpf" label="CPF" name="cpf" defaultValue={d("cpf")} required placeholder="000.000.000-00" />
           <TextField label="Data de nascimento" name="birth_date" type="date" defaultValue={d("birth_date")} required />
         </div>
@@ -65,7 +65,7 @@ export function RenterProfileForm({
           <MaskedField mask="cep" label="CEP" name="address_zip" defaultValue={d("address_zip")} required />
           <TextField label="Logradouro" name="address_street" defaultValue={d("address_street")} autoComplete="address-line1" required />
         </div>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <TextField label="Número" name="address_number" defaultValue={d("address_number")} required />
           <TextField label="Complemento" name="address_complement" defaultValue={d("address_complement")} className="sm:col-span-2" />
         </div>
@@ -77,7 +77,7 @@ export function RenterProfileForm({
       </Section>
 
       <Section title="Habilitação (CNH)">
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <TextField label="Número da CNH" name="cnh_number" defaultValue={d("cnh_number")} required inputMode="numeric" maxLength={11} placeholder="11 dígitos" />
           <SelectField
             label="Categoria"
@@ -92,7 +92,7 @@ export function RenterProfileForm({
       </Section>
 
       <Section title="Contato de emergência">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField label="Nome" name="emergency_contact_name" defaultValue={d("emergency_contact_name")} required />
           <MaskedField mask="phone" label="Telefone" name="emergency_contact_phone" defaultValue={d("emergency_contact_phone")} required />
         </div>
@@ -102,7 +102,7 @@ export function RenterProfileForm({
         <Callout tone="info" icon={Lock}>
           Envio privado e criptografado em trânsito. Não há verificação automática de autenticidade — a locadora analisa manualmente.
         </Callout>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FileField name="cnh_document" label="Foto ou PDF da CNH" required existing={hasCnh} />
           <FileField name="address_proof" label="Comprovante de residência" required existing={hasProof} />
         </div>

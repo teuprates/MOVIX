@@ -16,7 +16,7 @@ function apply(theme: Theme) {
   root.classList.toggle("dark", dark);
 }
 
-export function ThemeToggle({ className }: { className?: string }) {
+export function ThemeToggle({ className, variant = "default" }: { className?: string; variant?: "default" | "rail" }) {
   const [theme, setTheme] = useState<Theme>("system");
 
   useEffect(() => {
@@ -47,7 +47,11 @@ export function ThemeToggle({ className }: { className?: string }) {
   ];
 
   return (
-    <div role="radiogroup" aria-label="Tema" className={cn("inline-flex rounded-lg border border-border bg-surface-2 p-0.5", className)}>
+    <div
+      role="radiogroup"
+      aria-label="Tema"
+      className={cn("inline-flex rounded-lg border p-0.5", variant === "rail" ? "border-rail-border bg-rail-2" : "border-border bg-surface-2", className)}
+    >
       {options.map(({ value, label, Icon }) => (
         <button
           key={value}
@@ -58,8 +62,10 @@ export function ThemeToggle({ className }: { className?: string }) {
           title={label}
           onClick={() => choose(value)}
           className={cn(
-            "grid size-7 place-items-center rounded-md text-muted transition",
-            theme === value ? "bg-surface text-fg shadow-sm" : "hover:text-fg",
+            "grid size-7 place-items-center rounded-md transition-colors duration-150",
+            variant === "rail"
+              ? theme === value ? "bg-rail-3 text-white" : "text-rail-muted hover:text-rail-fg"
+              : theme === value ? "bg-surface text-fg shadow-sm" : "text-muted hover:text-fg",
           )}
         >
           <Icon className="size-3.5" aria-hidden />

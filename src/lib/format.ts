@@ -50,3 +50,6 @@ export function parseDateRange(range: string) {
   const [start, end] = range.replace(/[[\]()]/g, "").split(",").map((s) => s.trim());
   return { start, end: inclusiveEnd ? end : addDays(end, -1) };
 }
+
+/** Concordância de número: plural(2, "parcela vencida", "parcelas vencidas") → "2 parcelas vencidas". */
+export const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;

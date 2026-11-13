@@ -5,61 +5,97 @@
 /* ------------------------------------------------------------------
    Design tokens MOVIX — preto, azul-noite, azul elétrico e ciano.
    Claro é o padrão do :root; .dark sobrescreve. Marketing força .dark.
+   Painéis: trilho lateral azul-noite (--rail*) em ambos os temas (DESIGN.md v2).
    ------------------------------------------------------------------ */
 :root {
-  --bg: #f4f6fb;
+  --bg: #f4f6fa;
   --surface: #ffffff;
-  --surface-2: #eef2fa;
-  --surface-3: #e3e9f5;
-  --border: #d9e0ef;
-  --fg: #0a1024;
-  --muted: #4f5a7c;
-  --subtle: #7b85a6;
+  --surface-2: #f0f3f9;
+  --surface-3: #e5eaf3;
+  --border: #e0e5ef;
+  --border-strong: #cbd3e3;
+  --fg: #0b1124;
+  --muted: #4f5a7a;
+  --subtle: #626c88;
   --primary: #1557e0;
+  --primary-hover: #0f4bc7;
   --primary-fg: #ffffff;
-  --primary-soft: #e4edff;
-  --accent: #007ea3;
+  --primary-soft: #e6eeff;
+  --accent: #00799c;
   --success: #12804a;
-  --success-soft: #e2f6ea;
-  --warning: #a35a00;
-  --warning-soft: #fff1dc;
+  --success-soft: #e3f5ea;
+  --warning: #9a5500;
+  --warning-soft: #fff2de;
   --danger: #c42b2b;
-  --danger-soft: #fde6e6;
-  --info-soft: #e2f3fb;
+  --danger-soft: #fde8e8;
+  --info-soft: #e1f3fa;
   --ring: #3d7bff;
-  --shadow: 0 1px 2px rgb(10 16 36 / 0.06), 0 8px 24px -12px rgb(10 16 36 / 0.12);
+  --shadow: 0 1px 2px rgb(11 17 36 / 0.05), 0 4px 16px -8px rgb(11 17 36 / 0.1);
+  --shadow-pop: 0 2px 6px rgb(11 17 36 / 0.08), 0 18px 40px -12px rgb(11 17 36 / 0.28);
   --brand: var(--primary);
   --viz-1: #2a78d6;
   --viz-2: #eb6834;
-  --viz-grid: #e3e8f2;
+  --viz-grid: #e6eaf2;
+
+  /* Status da frota (pulso) — mesmas famílias dos badges */
+  --st-available: #16a05c;
+  --st-reserved: #0a9cc4;
+  --st-rented: #2563eb;
+  --st-maintenance: #d48806;
+  --st-inactive: #9aa3ba;
+
+  /* Trilho (sidebar) azul-noite — idêntico nos dois temas */
+  --rail: #070d1f;
+  --rail-2: #0e1733;
+  --rail-3: #15214a;
+  --rail-border: #18224280;
+  --rail-fg: #e4e9fa;
+  --rail-muted: #93a0c6;
+  --rail-accent: #00d1ff;
+
   color-scheme: light;
 }
 
 .dark {
-  --bg: #05070d;
-  --surface: #0b1020;
-  --surface-2: #10172d;
-  --surface-3: #18213d;
-  --border: #1d2748;
-  --fg: #e9edf9;
-  --muted: #9aa4c6;
-  --subtle: #6c779c;
-  --primary: #2f74ff;
+  --bg: #050811;
+  --surface: #0a1020;
+  --surface-2: #0f172c;
+  --surface-3: #16203b;
+  --border: #19223f;
+  --border-strong: #26325a;
+  --fg: #e8ecf8;
+  --muted: #9ba5c7;
+  --subtle: #7782a6;
+  --primary: #3a7bff;
+  --primary-hover: #5a90ff;
   --primary-fg: #ffffff;
   --primary-soft: #0f1d45;
-  --accent: #00d1ff;
-  --success: #34d27b;
+  --accent: #22d3ff;
+  --success: #3ad07f;
   --success-soft: #0b2a1b;
   --warning: #ffb547;
   --warning-soft: #2e1f08;
   --danger: #ff6b6b;
   --danger-soft: #331013;
   --info-soft: #062433;
-  --ring: #4c8dff;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -16px rgb(0 0 0 / 0.7);
+  --ring: #5b95ff;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.45), 0 8px 24px -14px rgb(0 0 0 / 0.75);
+  --shadow-pop: 0 2px 8px rgb(0 0 0 / 0.5), 0 24px 48px -16px rgb(0 0 0 / 0.85);
   --viz-1: #3987e5;
   --viz-2: #d95926;
-  --viz-grid: #1a2340;
+  --viz-grid: #18213c;
+
+  --st-available: #34c77b;
+  --st-reserved: #22c3ec;
+  --st-rented: #3f7fff;
+  --st-maintenance: #f0a424;
+  --st-inactive: #5b6688;
+
+  --rail: #03060e;
+  --rail-2: #0a1126;
+  --rail-3: #111c3d;
+  --rail-border: #141d38;
+
   color-scheme: dark;
 }
 
@@ -69,10 +105,12 @@
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-fg: var(--fg);
   --color-muted: var(--muted);
   --color-subtle: var(--subtle);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-fg: var(--primary-fg);
   --color-primary-soft: var(--primary-soft);
   --color-accent: var(--accent);
@@ -85,14 +123,28 @@
   --color-info-soft: var(--info-soft);
   --color-brand: var(--brand);
   --color-ring: var(--ring);
+  --color-rail: var(--rail);
+  --color-rail-2: var(--rail-2);
+  --color-rail-3: var(--rail-3);
+  --color-rail-border: var(--rail-border);
+  --color-rail-fg: var(--rail-fg);
+  --color-rail-muted: var(--rail-muted);
+  --color-rail-accent: var(--rail-accent);
+  --color-st-available: var(--st-available);
+  --color-st-reserved: var(--st-reserved);
+  --color-st-rented: var(--st-rented);
+  --color-st-maintenance: var(--st-maintenance);
+  --color-st-inactive: var(--st-inactive);
   --color-electric: #1e6bff;
   --color-cyan: #00d1ff;
   --color-night: #050914;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-sora), var(--font-inter), ui-sans-serif, sans-serif;
   --shadow-card: var(--shadow);
+  --shadow-pop: var(--shadow-pop);
   --radius-xl: 0.875rem;
-  --radius-2xl: 1.125rem;
+  --radius-2xl: 1rem;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html {
@@ -105,6 +157,14 @@ body {
   color: var(--fg);
   font-family: var(--font-sans);
   font-feature-settings: "cv11", "ss01";
+  caret-color: var(--primary);
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
 }
 
 :focus-visible {
@@ -114,7 +174,13 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--primary) 35%, transparent);
+  background: color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+/* Barras de rolagem discretas, a partir da paleta */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -142,6 +208,16 @@ body {
   100% { background-position: -200% 0; }
 }
 
+/* Entrada curta de menus e painéis sobrepostos (estado, não coreografia) */
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@utility animate-pop {
+  animation: pop-in 160ms var(--ease-out) both;
+}
+
+/* Usado apenas na landing (marketing, modo Persuade) */
 @utility text-gradient {
   background: linear-gradient(100deg, #ffffff 0%, #9cc2ff 40%, #00d1ff 100%);
   -webkit-background-clip: text;
@@ -150,9 +226,9 @@ body {
 }
 
 @utility glass {
-  background: color-mix(in srgb, var(--surface) 72%, transparent);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
 }
 
 /* Leaflet: herdar tema */

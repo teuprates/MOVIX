@@ -28,7 +28,7 @@ export function MaintenanceFormButton({ vehicles, defaultVehicle }: { vehicles: 
   return (
     <FormModal title="Registrar manutenção" trigger="Nova manutenção" wide description="Agende revisões por data/km ou registre serviços realizados (o custo entra em despesas).">
       {(close) => (
-        <ActionForm action={createMaintenance} onSuccess={close} className="grid gap-4 sm:grid-cols-2">
+        <ActionForm action={createMaintenance} onSuccess={close} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <SelectField label="Veículo" name="vehicle_id" defaultValue={defaultVehicle} options={vehicles.map((v) => ({ value: v.id, label: v.label }))} placeholder="Selecione" required />
           <SelectField label="Tipo" name="kind" options={MAINTENANCE_KIND} />
           <TextField label="Descrição" name="description" required className="sm:col-span-2" />
@@ -59,7 +59,7 @@ export function CompleteMaintenanceButton({ id }: { id: string }) {
     <>
       <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>Concluir</Button>
       <Modal open={open} onClose={() => setOpen(false)} title="Concluir manutenção" description="O custo informado será lançado como despesa do veículo.">
-        <ActionForm action={completeMaintenance.bind(null, id) as (s: FormState, f: FormData) => Promise<FormState>} onSuccess={() => setOpen(false)} className="grid gap-4 sm:grid-cols-3">
+        <ActionForm action={completeMaintenance.bind(null, id) as (s: FormState, f: FormData) => Promise<FormState>} onSuccess={() => setOpen(false)} className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <TextField label="Data" name="performed_at" type="date" required />
           <TextField label="Km" name="mileage" type="number" min={0} />
           <TextField label="Custo (R$)" name="cost" type="number" step="0.01" min={0} />
@@ -74,7 +74,7 @@ export function IncidentFormButton({ vehicles, rentals, label = "Registrar ocorr
   return (
     <FormModal title="Registrar ocorrência" trigger={label} wide description="Acidentes, panes, avarias ou outros eventos. Anexe fotos ou documentos.">
       {(close) => (
-        <ActionForm action={createIncident} onSuccess={close} className="grid gap-4 sm:grid-cols-2">
+        <ActionForm action={createIncident} onSuccess={close} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {rentals ? (
             <SelectField label="Locação" name="rental_id" options={rentals.map((r) => ({ value: r.id, label: r.label }))} placeholder="Selecione" required />
           ) : (
@@ -99,7 +99,7 @@ export function FineFormButton({ vehicles, rentals }: { vehicles: Opt[]; rentals
   return (
     <FormModal title="Registrar multa" trigger="Nova multa" wide description="Associe ao veículo e, se aplicável, à locação do período da infração.">
       {(close) => (
-        <ActionForm action={createFine} onSuccess={close} className="grid gap-4 sm:grid-cols-2">
+        <ActionForm action={createFine} onSuccess={close} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <SelectField label="Veículo" name="vehicle_id" value={vehicle} onChange={(e) => setVehicle(e.target.value)} options={vehicles.map((v) => ({ value: v.id, label: v.label }))} placeholder="Selecione" required />
           <SelectField label="Locação (opcional)" name="rental_id" options={options.map((r) => ({ value: r.id, label: r.label }))} placeholder="Nenhuma" />
           <TextField label="Descrição da infração" name="description" required className="sm:col-span-2" />
@@ -119,7 +119,7 @@ export function ExpenseFormButton({ vehicles }: { vehicles: Opt[] }) {
   return (
     <FormModal title="Registrar despesa" trigger="Nova despesa">
       {(close) => (
-        <ActionForm action={createExpense} onSuccess={close} className="grid gap-4 sm:grid-cols-2">
+        <ActionForm action={createExpense} onSuccess={close} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <SelectField label="Categoria" name="category" options={EXPENSE_CATEGORY} />
           <TextField label="Valor (R$)" name="amount" type="number" step="0.01" min={0.01} required />
           <TextField label="Data" name="spent_at" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} />

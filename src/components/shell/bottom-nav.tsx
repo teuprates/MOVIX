@@ -6,35 +6,55 @@ import { cn } from "@/lib/cn";
 
 const ITEMS = [
   { href: "/app", label: "Início", icon: Home, exact: true },
-  { href: "/app/parcelas", label: "Parcelas", icon: CreditCard },
+  { href: "/app/parcelas", label: "Pagamentos", icon: CreditCard },
   { href: "/app/ocorrencias", label: "Ocorrências", icon: ShieldAlert },
   { href: "/app/assistente", label: "Assistente", icon: Bot },
   { href: "/app/perfil", label: "Perfil", icon: UserRound },
 ];
 
+const isOn = (pathname: string, href: string, exact?: boolean) =>
+  exact ? pathname === href || pathname.startsWith("/app/locacoes") || pathname.startsWith("/app/vistorias") : pathname.startsWith(href);
+
 export function RenterNav({ variant }: { variant: "bottom" | "top" }) {
   const pathname = usePathname();
-  const active = (href: string, exact?: boolean) => (exact ? pathname === href || pathname.startsWith("/app/locacoes") || pathname.startsWith("/app/vistorias") : pathname.startsWith(href));
   if (variant === "top") {
     return (
-      <nav aria-label="Navegação do app" className="hidden gap-1 md:flex">
-        {ITEMS.map((i) => (
-          <Link key={i.href} href={i.href} aria-current={active(i.href, i.exact) ? "page" : undefined} className={cn("inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium", active(i.href, i.exact) ? "bg-primary-soft text-fg" : "text-muted hover:bg-surface-2 hover:text-fg")}>
-            <i.icon className={cn("size-4", active(i.href, i.exact) && "text-brand")} aria-hidden /> {i.label}
-          </Link>
-        ))}
+      <nav aria-label="Navegação do app" className="hidden items-center gap-1 md:flex">
+        {ITEMS.map((i) => {
+          const on = isOn(pathname, i.href, i.exact);
+          return (
+            <Link
+              key={i.href}
+              href={i.href}
+              aria-current={on ? "page" : undefined}
+              title={i.label}
+              className={cn(
+                "relative inline-flex h-9 items-center gap-2 rounded-full px-3 text-sm font-medium transition-colors duration-150 lg:px-3.5",
+                on ? "bg-fg text-bg" : "text-muted hover:bg-surface-2 hover:text-fg",
+              )}
+            >
+              <i.icon className="size-4 shrink-0" aria-hidden /> <span className="sr-only lg:not-sr-only">{i.label}</span>
+            </Link>
+          );
+        })}
       </nav>
     );
   }
   return (
-    <nav aria-label="Navegação do app" className="glass fixed inset-x-0 bottom-0 z-40 border-t border-border pb-[env(safe-area-inset-bottom)] md:hidden">
-      <ul className="grid grid-cols-5">
+    <nav aria-label="Navegação do app" className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden">
+      <ul className="mx-auto grid max-w-md grid-cols-5 px-1">
         {ITEMS.map((i) => {
-          const on = active(i.href, i.exact);
+          const on = isOn(pathname, i.href, i.exact);
           return (
             <li key={i.href}>
-              <Link href={i.href} aria-current={on ? "page" : undefined} className={cn("flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium", on ? "text-brand" : "text-muted")}>
-                <i.icon className="size-5" aria-hidden />
+              <Link
+                href={i.href}
+                aria-current={on ? "page" : undefined}
+                className={cn("group flex flex-col items-center gap-1 pb-2 pt-2 text-[0.6875rem] font-medium transition-colors", on ? "text-fg" : "text-muted")}
+              >
+                <span className={cn("grid h-7 w-12 place-items-center rounded-full transition-colors duration-150", on ? "bg-primary-soft text-primary" : "group-hover:bg-surface-2")}>
+                  <i.icon className="size-[1.1rem]" aria-hidden />
+                </span>
                 {i.label}
               </Link>
             </li>

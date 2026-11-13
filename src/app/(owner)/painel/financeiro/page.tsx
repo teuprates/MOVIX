@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowDownRight, ArrowUpRight, Clock, Wallet } from "lucide-react";
 import { requireOwner } from "@/lib/auth/context";
-import { brl, date, dateTime } from "@/lib/format";
+import { brl, date, dateTime, plural } from "@/lib/format";
 import { EXPENSE_CATEGORY, PAYMENT_METHOD } from "@/lib/labels";
 import { loadFinance, parsePeriod } from "@/features/finance/queries";
 import { ExpenseFormButton } from "@/features/operations/forms";
@@ -9,7 +9,7 @@ import { deleteExpense } from "@/features/operations/actions";
 import { CategoryBars, RevenueExpenseChart } from "@/components/charts";
 import { PeriodFilter } from "@/components/period-filter";
 import { ConfirmAction } from "@/components/ui/dialog";
-import { Card, CardBody, CardHeader, PageHeader, SimulatedBadge, StatCard, Table, Td, Th } from "@/components/ui/primitives";
+import { Card, CardBody, CardHeader, PageHeader, SimulatedBadge, MetricStrip, Table, Td, Th } from "@/components/ui/primitives";
 
 export const metadata = { title: "Financeiro" };
 
@@ -32,13 +32,16 @@ export default async function FinancePage({ searchParams }: PageProps<"/painel/f
         }
       />
       <PeriodFilter from={f.from} to={f.to} vehicleId={f.vehicleId} vehicles={fin.vehicles} />
-      <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard label="Receitas" value={brl(fin.revenue)} icon={ArrowUpRight} tone="success" hint={`${fin.payments.length} parcela(s) paga(s)`} />
-        <StatCard label="Despesas" value={brl(fin.expenseTotal)} icon={ArrowDownRight} tone="danger" hint={`${fin.expenses.length} lançamento(s)`} />
-        <StatCard label="Lucro estimado" value={brl(fin.profit)} icon={Wallet} tone={fin.profit >= 0 ? "primary" : "danger"} />
-        <StatCard label="A receber" value={brl(fin.receivable)} icon={Clock} tone="warning" hint={fin.overdueTotal ? `${brl(fin.overdueTotal)} em atraso` : "Nenhuma em atraso"} />
-      </div>
-      <div className="mb-5 grid gap-5 lg:grid-cols-3">
+      <MetricStrip
+        className="mb-5"
+        items={[
+          { label: "Receitas", value: brl(fin.revenue), icon: ArrowUpRight, hint: plural(fin.payments.length, "parcela paga", "parcelas pagas") },
+          { label: "Despesas", value: brl(fin.expenseTotal), icon: ArrowDownRight, hint: plural(fin.expenses.length, "lançamento", "lançamentos") },
+          { label: "Lucro estimado", value: brl(fin.profit), icon: Wallet, tone: fin.profit < 0 ? "danger" : undefined, hint: "Receitas pagas − despesas" },
+          { label: "A receber", value: brl(fin.receivable), icon: Clock, hint: fin.overdueTotal ? <span className="font-medium text-danger">{brl(fin.overdueTotal)} em atraso</span> : "Nenhuma em atraso" },
+        ]}
+      />
+      <div className="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader title="Receitas × despesas por mês" />
           <CardBody><RevenueExpenseChart data={fin.months} /></CardBody>
@@ -71,7 +74,7 @@ export default async function FinancePage({ searchParams }: PageProps<"/painel/f
           </tbody>
         </Table>
       </Card>
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <Card>
           <CardHeader title="Recebimentos" />
           <ul className="divide-y divide-border text-sm">

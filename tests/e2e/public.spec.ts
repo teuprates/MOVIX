@@ -43,7 +43,7 @@ test.describe("demo pública (dados fictícios, sem banco)", () => {
     await page.goto("/demonstracao");
     const before = await page.getByText("A receber", { exact: true }).locator("..").locator("..").innerText();
     await page.getByRole("button", { name: "Simular pagamento" }).first().click();
-    await expect(page.getByText("Paga").first()).toBeVisible();
+    await expect(page.getByText("Paga", { exact: true }).first()).toBeVisible();
     const after = await page.getByText("A receber", { exact: true }).locator("..").locator("..").innerText();
     expect(after).not.toEqual(before);
   });

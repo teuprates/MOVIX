@@ -52,7 +52,7 @@ export default async function RenterDetailPage({ params }: PageProps<"/painel/lo
         }
       />
       {cnhExpired && <Callout tone="danger" icon={ShieldAlert} title="CNH vencida" className="mb-5">A validade informada já passou. Solicite atualização antes de emitir contratos.</Callout>}
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader title="Cadastro" description="Dados declarados pelo locatário — sem verificação externa de autenticidade." />
           <CardBody>

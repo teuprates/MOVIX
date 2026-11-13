@@ -6,7 +6,8 @@ import { MODALITY_LABEL } from "@/lib/domain/pricing";
 import { RENTAL_STATUS } from "@/lib/labels";
 import { cn } from "@/lib/cn";
 import { RentalStatusBadge } from "@/components/status-badges";
-import { ButtonLink, Card, EmptyState, PageHeader, Table, Td, Th } from "@/components/ui/primitives";
+import { ButtonLink, Card, EmptyState, PageHeader } from "@/components/ui/primitives";
+import { DataTable } from "@/components/ui/data-table";
 
 export const metadata = { title: "Contratos" };
 
@@ -29,7 +30,7 @@ export default async function ContractsPage({ searchParams }: PageProps<"/painel
       <PageHeader title="Contratos e locações" description="Emissão, aceite eletrônico, versões e parcelas." actions={<ButtonLink href="/painel/contratos/novo"><Plus className="size-4" /> Novo contrato</ButtonLink>} />
       <nav aria-label="Filtrar por status" className="mb-4 flex flex-wrap gap-2">
         {[["", "Todos"], ...Object.entries(RENTAL_STATUS)].map(([k, label]) => (
-          <Link key={k} href={k ? `?status=${k}` : "?"} aria-current={status === k ? "page" : undefined} className={cn("rounded-full border px-3 py-1 text-sm", status === k ? "border-primary bg-primary-soft text-fg" : "border-border text-muted hover:text-fg")}>
+          <Link key={k} href={k ? `?status=${k}` : "?"} aria-current={status === k ? "page" : undefined} className={cn("rounded-full border px-3 py-1 text-sm transition-colors", status === k ? "border-primary/40 bg-primary-soft font-medium text-fg" : "border-border bg-surface text-muted hover:border-border-strong hover:text-fg")}>
             {label}
           </Link>
         ))}
@@ -38,22 +39,34 @@ export default async function ContractsPage({ searchParams }: PageProps<"/painel
         <EmptyState icon={FileSignature} title="Nenhum contrato" description="Emita o primeiro contrato para um locatário aprovado." action={<ButtonLink href="/painel/contratos/novo">Emitir contrato</ButtonLink>} />
       ) : (
         <Card>
-          <Table>
-            <thead><tr><Th>Código</Th><Th>Locatário</Th><Th>Veículo</Th><Th>Período</Th><Th>Modalidade</Th><Th className="text-right">Total</Th><Th>Status</Th></tr></thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.id} className="hover:bg-surface-2/50">
-                  <Td><Link href={`/painel/contratos/${r.id}`} className="font-medium text-primary hover:underline">{r.code}</Link></Td>
-                  <Td>{r.renter?.full_name}</Td>
-                  <Td>{r.vehicle?.brand} {r.vehicle?.model} <span className="font-mono text-xs text-muted">{r.vehicle?.plate}</span></Td>
-                  <Td className="whitespace-nowrap">{date(r.start_date)} – {date(r.end_date)}</Td>
-                  <Td>{MODALITY_LABEL[r.modality]}</Td>
-                  <Td className="text-right tabular-nums">{brl(r.total_amount)}</Td>
-                  <Td><RentalStatusBadge status={r.status} /></Td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+          <DataTable
+            searchPlaceholder="Buscar código, locatário ou placa"
+            initialSort={{ key: "start", dir: "desc" }}
+            minWidth={760}
+            columns={[
+              { key: "code", label: "Código", sortable: true },
+              { key: "renter", label: "Locatário", sortable: true },
+              { key: "vehicle", label: "Veículo", sortable: true },
+              { key: "start", label: "Período", sortable: true },
+              { key: "modality", label: "Modalidade" },
+              { key: "total", label: "Total", align: "right", sortable: true },
+              { key: "status", label: "Status", sortable: true },
+            ]}
+            rows={rows.map((r) => ({
+              id: r.id,
+              search: `${r.code} ${r.renter?.full_name ?? ""} ${r.vehicle?.brand ?? ""} ${r.vehicle?.model ?? ""} ${r.vehicle?.plate ?? ""}`,
+              sort: { code: r.code, renter: r.renter?.full_name ?? null, vehicle: `${r.vehicle?.brand} ${r.vehicle?.model}`, start: r.start_date, total: Number(r.total_amount), status: RENTAL_STATUS[r.status as keyof typeof RENTAL_STATUS] ?? r.status },
+              cells: {
+                code: <Link href={`/painel/contratos/${r.id}`} className="font-mono text-[0.8125rem] font-medium text-primary hover:underline">{r.code}</Link>,
+                renter: r.renter?.full_name,
+                vehicle: <span>{r.vehicle?.brand} {r.vehicle?.model} <span className="block font-mono text-xs text-muted">{r.vehicle?.plate}</span></span>,
+                start: <span className="whitespace-nowrap tabular-nums">{date(r.start_date)} – {date(r.end_date)}</span>,
+                modality: MODALITY_LABEL[r.modality],
+                total: brl(r.total_amount),
+                status: <RentalStatusBadge status={r.status} />,
+              },
+            }))}
+          />
         </Card>
       )}
     </>

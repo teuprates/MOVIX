@@ -40,9 +40,10 @@ test.describe.configure({ mode: "serial" });
 test("proprietário: dashboard, frota, financeiro e relatório da própria locadora", async ({ page }) => {
   await login(page, USERS.ownerA);
   await expect(page).toHaveURL(/\/painel/);
-  await expect(page.getByText("Horizonte Locações (demo)").first()).toBeVisible();
+  // A sidebar fica oculta no mobile: procura a ocorrência visível (cabeçalho do dashboard).
+  await expect(page.getByText("Horizonte Locações (demo)").filter({ visible: true }).first()).toBeVisible();
   await page.goto("/painel/frota");
-  await expect(page.getByText("Argo").first()).toBeVisible();
+  await expect(page.getByText("Argo").filter({ visible: true }).first()).toBeVisible();
   await page.goto("/painel/financeiro");
   await expect(page.getByText("Lucro estimado").first()).toBeVisible();
   const pdf = await page.request.get("/api/relatorios/pdf");
@@ -58,8 +59,11 @@ test("isolamento: proprietário B não vê locações da locadora A (API e UI)",
   const { data: leaked } = await b.from("rentals").select("id").eq("id", rentalsA![0].id);
   expect(leaked).toEqual([]);
   await login(page, USERS.ownerB);
-  const res = await page.goto(`/painel/contratos/${rentalsA![0].id}`);
-  expect(res?.status()).toBe(404);
+  // Com loading.tsx a rota é transmitida em streaming: notFound() renderiza a tela 404 com HTTP 200
+  // (comportamento documentado do Next). O que importa é não exibir nenhum dado da locadora A.
+  await page.goto(`/painel/contratos/${rentalsA![0].id}`);
+  await expect(page.getByText("Página não encontrada")).toBeVisible();
+  await expect(page.getByRole("link", { name: "PDF" })).toHaveCount(0);
 });
 
 test("locatário: duas locadoras, troca sem vazamento e aceite + pagamento simulado", async ({ page }) => {
@@ -98,7 +102,8 @@ test("locatário vinculado sem contrato ativo não vê chassi; não vinculado n�
 
 test("convidado pendente vê acesso restrito", async ({ page }) => {
   await login(page, USERS.pending);
-  await expect(page.getByText("Cadastro em análise")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Cadastro em análise" })).toBeVisible();
+  await expect(page.getByText("Horizonte Locações (demo)").filter({ visible: true }).first()).toBeVisible();
   const c = await api(USERS.pending);
   expect((await c.from("vehicles").select("id")).data).toEqual([]);
 });
@@ -121,10 +126,10 @@ test("admin vê agregados; não-admin é negado; /demo exige locadora demo", asy
   const owner = await api(USERS.ownerA);
   expect((await owner.rpc("admin_metrics")).error?.message).toContain("MOVIX_NOT_AUTHORIZED");
   await login(page, USERS.admin, "/admin");
-  await expect(page.getByText("Administração da plataforma")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Administração da plataforma" })).toBeVisible();
   await page.context().clearCookies();
   await login(page, USERS.renter, "/demo");
-  await expect(page.getByText("Acesso restrito")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Acesso restrito" })).toBeVisible();
   await page.context().clearCookies();
   await login(page, USERS.ownerA, "/demo");
   await expect(page.getByRole("heading", { name: "Problema" })).toBeVisible();

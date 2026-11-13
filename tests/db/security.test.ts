@@ -107,6 +107,9 @@ describe("convite, aprovação e isolamento", () => {
   it("locatário pendente não vê veículos; após aprovação vê apenas a locadora correta", async () => {
     await db.as(u.renter, "select public.join_with_invitation($1)", [inviteA]);
     expect(await db.as(u.renter, "select id from public.vehicles")).toHaveLength(0);
+    // Pendente enxerga apenas a locadora à qual pediu vínculo (para a tela "Cadastro em análise")
+    const orgs = await db.as<{ id: string }>(u.renter, "select id from public.organizations");
+    expect(orgs.map((o) => o.id)).toEqual([org.A]);
 
     const pending = await db.as<{ id: string; status: string }>(u.ownerA,
       "select id, status from public.organization_memberships where organization_id = $1 and user_id = $2", [org.A, u.renter]);

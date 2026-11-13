@@ -9,6 +9,8 @@ const external = Boolean(process.env.E2E_BASE_URL);
 export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: true,
+  // Jornadas autenticadas compartilham o mesmo banco real: um worker evita corrida entre desktop e mobile.
+  workers: process.env.E2E_SUPABASE === "1" ? 1 : undefined,
   retries: process.env.CI ? 1 : 0,
   reporter: [["list"], ["html", { open: "never", outputFolder: "playwright-report" }]],
   use: { baseURL, trace: "retain-on-failure", locale: "pt-BR", timezoneId: "America/Sao_Paulo" },

@@ -1,0 +1,163 @@
+"use client";
+import { useEffect, useRef, useState, useTransition, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
+import { toast } from "sonner";
+import { cn } from "@/lib/cn";
+import type { FormState } from "@/lib/form-state";
+import { Button, Textarea, type ButtonProps } from "./primitives";
+
+/** Modal acessível baseado em <dialog> nativo (foco preso, Esc fecha, backdrop). */
+export function Modal({ open, onClose, title, description, children, className }: {
+  open: boolean;
+  onClose: () => void;
+  title: ReactNode;
+  description?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const d = ref.current;
+    if (!d) return;
+    if (open && !d.open) d.showModal();
+    if (!open && d.open) d.close();
+  }, [open]);
+  return (
+    <dialog
+      ref={ref}
+      onClose={onClose}
+      onClick={(e) => e.target === ref.current && onClose()}
+      aria-labelledby="modal-title"
+      className={cn(
+        "m-auto w-[min(92vw,34rem)] rounded-2xl border border-border bg-surface p-0 text-fg shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm",
+        className,
+      )}
+    >
+      {open && (
+        <div className="p-5">
+          <div className="mb-4 flex items-start justify-between gap-3">
+            <div>
+              <h2 id="modal-title" className="font-display text-lg font-semibold">{title}</h2>
+              {description && <p className="mt-1 text-sm text-muted">{description}</p>}
+            </div>
+            <button type="button" onClick={onClose} className="rounded-md p-1 text-muted hover:bg-surface-2 hover:text-fg" aria-label="Fechar">
+              <X className="size-4" />
+            </button>
+          </div>
+          {children}
+        </div>
+      )}
+    </dialog>
+  );
+}
+
+/**
+ * Botão que pede confirmação antes de executar uma Server Action (ações irreversíveis).
+ * Opcionalmente coleta uma justificativa (`withNotes`).
+ */
+export function ConfirmAction({
+  action,
+  label,
+  title,
+  description,
+  confirmLabel = "Confirmar",
+  variant = "primary",
+  size = "md",
+  withNotes,
+  notesLabel = "Observações",
+  notesRequired,
+  icon,
+  className,
+}: {
+  action: (notes?: string) => Promise<FormState>;
+  label: ReactNode;
+  title: string;
+  description?: ReactNode;
+  confirmLabel?: string;
+  variant?: ButtonProps["variant"];
+  size?: ButtonProps["size"];
+  withNotes?: boolean;
+  notesLabel?: string;
+  notesRequired?: boolean;
+  icon?: ReactNode;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [pending, start] = useTransition();
+  const router = useRouter();
+
+  const run = () =>
+    start(async () => {
+      const res = await action(withNotes ? notes : undefined);
+      if (res.ok) {
+        toast.success(res.message ?? "Concluído.");
+        setOpen(false);
+        setNotes("");
+        if (res.redirectTo) router.push(res.redirectTo);
+        else router.refresh();
+      } else {
+        toast.error(res.message ?? "Não foi possível concluir.");
+      }
+    });
+
+  return (
+    <>
+      <Button type="button" variant={variant} size={size} onClick={() => setOpen(true)} className={className}>
+        {icon}
+        {label}
+      </Button>
+      <Modal open={open} onClose={() => setOpen(false)} title={title} description={description}>
+        {withNotes && (
+          <div className="mb-4 flex flex-col gap-1.5">
+            <label htmlFor="confirm-notes" className="text-sm font-medium">
+              {notesLabel}
+              {notesRequired && <span className="text-danger"> *</span>}
+            </label>
+            <Textarea id="confirm-notes" value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={1000} />
+          </div>
+        )}
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
+            Cancelar
+          </Button>
+          <Button
+            type="button"
+            variant={variant === "danger" ? "danger" : "primary"}
+            loading={pending}
+            disabled={notesRequired && !notes.trim()}
+            onClick={run}
+          >
+            {confirmLabel}
+          </Button>
+        </div>
+      </Modal>
+    </>
+  );
+}
+
+/** Executa uma action imediatamente (sem confirmação) com feedback via toast. */
+export function ActionButton({ action, children, ...props }: Omit<ButtonProps, "onClick" | "action"> & { action: () => Promise<FormState> }) {
+  const [pending, start] = useTransition();
+  const router = useRouter();
+  return (
+    <Button
+      type="button"
+      loading={pending}
+      onClick={() =>
+        start(async () => {
+          const res = await action();
+          if (res.ok) {
+            if (res.message) toast.success(res.message);
+            if (res.redirectTo) router.push(res.redirectTo);
+            else router.refresh();
+          } else toast.error(res.message ?? "Não foi possível concluir.");
+        })
+      }
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+}

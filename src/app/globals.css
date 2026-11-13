@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------
+   Design tokens MOVIX — preto, azul-noite, azul elétrico e ciano.
+   Claro é o padrão do :root; .dark sobrescreve. Marketing força .dark.
+   ------------------------------------------------------------------ */
+:root {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-2: #eef2fa;
+  --surface-3: #e3e9f5;
+  --border: #d9e0ef;
+  --fg: #0a1024;
+  --muted: #4f5a7c;
+  --subtle: #7b85a6;
+  --primary: #1557e0;
+  --primary-fg: #ffffff;
+  --primary-soft: #e4edff;
+  --accent: #007ea3;
+  --success: #12804a;
+  --success-soft: #e2f6ea;
+  --warning: #a35a00;
+  --warning-soft: #fff1dc;
+  --danger: #c42b2b;
+  --danger-soft: #fde6e6;
+  --info-soft: #e2f3fb;
+  --ring: #3d7bff;
+  --shadow: 0 1px 2px rgb(10 16 36 / 0.06), 0 8px 24px -12px rgb(10 16 36 / 0.12);
+  --brand: var(--primary);
+  --viz-1: #2a78d6;
+  --viz-2: #eb6834;
+  --viz-grid: #e3e8f2;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #05070d;
+  --surface: #0b1020;
+  --surface-2: #10172d;
+  --surface-3: #18213d;
+  --border: #1d2748;
+  --fg: #e9edf9;
+  --muted: #9aa4c6;
+  --subtle: #6c779c;
+  --primary: #2f74ff;
+  --primary-fg: #ffffff;
+  --primary-soft: #0f1d45;
+  --accent: #00d1ff;
+  --success: #34d27b;
+  --success-soft: #0b2a1b;
+  --warning: #ffb547;
+  --warning-soft: #2e1f08;
+  --danger: #ff6b6b;
+  --danger-soft: #331013;
+  --info-soft: #062433;
+  --ring: #4c8dff;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -16px rgb(0 0 0 / 0.7);
+  --viz-1: #3987e5;
+  --viz-2: #d95926;
+  --viz-grid: #1a2340;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border: var(--border);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info-soft: var(--info-soft);
+  --color-brand: var(--brand);
+  --color-ring: var(--ring);
+  --color-electric: #1e6bff;
+  --color-cyan: #00d1ff;
+  --color-night: #050914;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), var(--font-inter), ui-sans-serif, sans-serif;
+  --shadow-card: var(--shadow);
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.125rem;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@utility skeleton {
+  background: linear-gradient(90deg, var(--surface-2) 0%, var(--surface-3) 50%, var(--surface-2) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@utility text-gradient {
+  background: linear-gradient(100deg, #ffffff 0%, #9cc2ff 40%, #00d1ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility glass {
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+/* Leaflet: herdar tema */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: var(--surface-2);
+}
+.leaflet-control-attribution {
+  font-size: 10px;
+}

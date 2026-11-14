@@ -30,9 +30,8 @@ export const DemoMobile: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const { duration } = sceneRange("mobile");
-  const k1 = cueAt("mobile", "m2", 1);
-  const ownerAt = k1 + 6;
-  const renterAt = Math.round(k1 + (duration - k1) * 0.42);
+  const ownerAt = cueAt("mobile", "m2", 1) + 2;
+  const renterAt = cueAt("mobile", "m2", 2) + 2;
   return (
     <SceneShell duration={duration} slide={50}>
       <DemoLayout step={4} title={<>Instala como <span style={{ color: C.blueX }}>aplicativo.</span></>}>

@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { BarChart3, Car, FileSignature, Users } from "lucide-react";
 import { C, FONT } from "../config/theme";
-import { cueAt, lineAt, REVEAL_OFFSET, sceneRange } from "../config/timeline";
+import { cueAt, lineAt, markAt, REVEAL_OFFSET, sceneRange } from "../config/timeline";
 import { SceneShell } from "../components/SceneShell";
 import { Lockup } from "../components/Logo";
 import { FragmentCards } from "./fragments";
@@ -21,11 +21,9 @@ export const Reveal: React.FC = () => {
   const { duration } = sceneRange("virada");
   const hit = REVEAL_OFFSET;
   const v2 = lineAt("virada", "v2");
-  const c0 = cueAt("virada", "v2", 0);
-  const c1 = cueAt("virada", "v2", 1);
   const c2 = cueAt("virada", "v2", 2);
-  // "veículos" e "contratos" fecham o 1º trecho; "locatários" e "financeiro" abrem o 2º
-  const chipAt = [c0 + (c1 - c0) * 0.55, c0 + (c1 - c0) * 0.8, c1 + 2, c1 + (c2 - c1) * 0.36];
+  // cada pilar entra quando a palavra é dita
+  const chipAt = ["veiculos", "contratos", "locatarios", "financeiro"].map((m) => markAt("virada", "v2", m) - 2);
 
   const converge = interpolate(frame, [2, hit], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.in(Easing.cubic) });
   const up = spring({ frame: frame - v2 + 8, fps, config: { damping: 200 }, durationInFrames: 28 });

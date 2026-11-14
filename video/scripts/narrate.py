@@ -190,7 +190,7 @@ def main():
                 cue = {"line": ln["id"], "text": text, "start": round(start + a, 3), "end": round(start + b, 3)}
                 cues.append(cue)
                 captions.append(cue)
-            lines.append({"id": ln["id"], "scene": sc["id"], "text": ln["text"], "start": round(start, 3), "end": round(start + dur, 3), "cues": [c["start"] for c in cues]})
+            lines.append({"id": ln["id"], "scene": sc["id"], "text": ln["text"], "start": round(start, 3), "end": round(start + dur, 3), "cues": [c["start"] for c in cues], "marks": {}})
             print(f"  {ln['id']:>3}  {start:6.2f} → {start + dur:6.2f}  ({dur:4.2f}s)  {ln['text']}")
             t = start + dur + ln.get("gap", 0)
         t += sc["tail"]

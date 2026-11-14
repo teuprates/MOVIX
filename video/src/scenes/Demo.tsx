@@ -1,7 +1,7 @@
 import React from "react";
 import { DESKTOP } from "../config/assets";
 import { C } from "../config/theme";
-import { cueAt, lineAt, sceneRange } from "../config/timeline";
+import { cueAt, lineAt, markAt, sceneRange } from "../config/timeline";
 import { SceneShell } from "../components/SceneShell";
 import { Screen } from "../components/Screen";
 import { DemoLayout, STAGE } from "./DemoLayout";
@@ -41,8 +41,7 @@ export const DemoPainel: React.FC = () => {
 export const DemoFrota: React.FC = () => {
   const { duration } = sceneRange("frota");
   const f1 = lineAt("frota", "f1");
-  const c0 = cueAt("frota", "f1", 0);
-  const c1 = cueAt("frota", "f1", 1);
+  const mark = (m: string) => markAt("frota", "f1", m);
   return (
     <SceneShell duration={duration} slide={50}>
       <DemoLayout step={1} title={<>Cada veículo <Hl>à mão.</Hl></>}>
@@ -55,9 +54,9 @@ export const DemoFrota: React.FC = () => {
           ]}
           highlights={[{ from: f1 + 24, to: duration + 20, x: 667, y: 237, w: 362, h: 312 }]}
           pings={[
-            { at: Math.round(c0 + (c1 - c0) * 0.5), x: 713, y: 263 },
-            { at: Math.round(c0 + (c1 - c0) * 0.74), x: 993, y: 263 },
-            { at: c1 + 14, x: 965, y: 522 },
+            { at: mark("status"), x: 713, y: 263 },
+            { at: mark("saude"), x: 993, y: 263 },
+            { at: mark("diaria"), x: 965, y: 522 },
           ]}
         />
       </DemoLayout>
@@ -69,8 +68,8 @@ export const DemoFrota: React.FC = () => {
 export const DemoContratos: React.FC = () => {
   const { duration } = sceneRange("contratos");
   const c1 = lineAt("contratos", "c1");
-  const k0 = cueAt("contratos", "c1", 0);
   const k1 = cueAt("contratos", "c1", 1);
+  const mark = (m: string) => markAt("contratos", "c1", m);
   return (
     <SceneShell duration={duration} slide={50}>
       <DemoLayout step={2} title={<>Do período ao <Hl>aceite.</Hl></>}>
@@ -86,9 +85,9 @@ export const DemoContratos: React.FC = () => {
             { from: k1, to: duration + 20, x: 1232, y: 338, w: 148, h: 36 },
           ]}
           pings={[
-            { at: Math.round(k0 + (k1 - k0) * 0.48), x: 882, y: 416 },
-            { at: Math.round(k0 + (k1 - k0) * 0.64), x: 1176, y: 416 },
-            { at: Math.round(k0 + (k1 - k0) * 0.8), x: 1265, y: 416 },
+            { at: mark("periodo"), x: 882, y: 416 },
+            { at: mark("valor"), x: 1176, y: 416 },
+            { at: mark("situacao"), x: 1265, y: 416 },
           ]}
         />
       </DemoLayout>
@@ -100,7 +99,7 @@ export const DemoContratos: React.FC = () => {
 export const DemoFinanceiro: React.FC = () => {
   const { duration } = sceneRange("financeiro");
   const n1 = lineAt("financeiro", "n1");
-  const k1 = cueAt("financeiro", "n1", 1);
+  const k1 = markAt("financeiro", "n1", "lucro");
   return (
     <SceneShell duration={duration} slide={50}>
       <DemoLayout step={3} title={<>Receita, despesa e <Hl>lucro.</Hl></>}>
@@ -110,11 +109,11 @@ export const DemoFinanceiro: React.FC = () => {
           keyframes={[
             { at: 0, x: 0, y: 243, w: 1440 },
             { at: n1 + 4, x: 262, y: 243, w: 1178 },
-            { at: k1 - 12, x: 262, y: 812, w: 1178 },
+            { at: k1 - 20, x: 262, y: 812, w: 1178 },
           ]}
           highlights={[
-            { from: n1 + 22, to: k1 - 14, x: 288, y: 259, w: 1120, h: 116 },
-            { from: k1 + 14, to: duration + 20, x: 288, y: 837, w: 1120, h: 342 },
+            { from: n1 + 22, to: k1 - 22, x: 288, y: 259, w: 1120, h: 116 },
+            { from: k1 + 6, to: duration + 20, x: 288, y: 837, w: 1120, h: 342 },
           ]}
         />
       </DemoLayout>

@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { ArrowRight } from "lucide-react";
 import { C, FONT } from "../config/theme";
-import { cueAt, lineAt, sceneRange } from "../config/timeline";
+import { cueAt, lineAt, lineEnd, sceneRange } from "../config/timeline";
 import { SceneShell } from "../components/SceneShell";
 import { Lockup } from "../components/Logo";
 
@@ -21,7 +21,8 @@ export const Closing: React.FC = () => {
   const slogan = cueAt("fechamento", "e4", 1);
   const e5 = lineAt("fechamento", "e5");
   const listOut = interpolate(frame, [e4 - 16, e4 - 4], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const cta = spring({ frame: frame - e5 + 4, fps, config: { damping: 14, stiffness: 120 } });
+  const ctaAt = lineEnd("fechamento", "e4") + 4; // o botão entra ao fim do slogan e pulsa na fala final
+  const cta = spring({ frame: frame - ctaAt, fps, config: { damping: 14, stiffness: 120 } });
   const pulse = interpolate((frame - e5) % 50, [0, 25, 50], [0, 1, 0]);
   const fadeToBlack = interpolate(frame, [duration - 22, duration - 2], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 

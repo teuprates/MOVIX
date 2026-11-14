@@ -14,10 +14,10 @@ Vídeo comercial narrado do MOVIX: **1920×1080, 30 fps, ~80 s**, H.264 + AAC, c
 
 | Tempo | Cena | Arquivo |
 |---|---|---|
-| 0 – 17,6 s | Problema: informação espalhada | `src/scenes/Problem.tsx` |
-| 17,6 – 27,4 s | Virada: revelação do MOVIX | `src/scenes/Reveal.tsx` |
-| 27,4 – 63,9 s | Demonstração: visão geral, frota, contratos, financeiro, celular | `src/scenes/Demo.tsx`, `DemoMobile.tsx` |
-| 63,9 – 80 s | Fechamento e CTA "Conheça o MOVIX" | `src/scenes/Closing.tsx` |
+| 0 – 19,9 s | Problema: informação espalhada | `src/scenes/Problem.tsx` |
+| 19,9 – 30,4 s | Virada: revelação do MOVIX | `src/scenes/Reveal.tsx` |
+| 30,4 – 66,9 s | Demonstração: visão geral, frota, contratos, financeiro, celular | `src/scenes/Demo.tsx`, `DemoMobile.tsx` |
+| 66,9 – 79,9 s | Fechamento e CTA "Conheça o MOVIX" | `src/scenes/Closing.tsx` |
 
 Os tempos não estão escritos no código: vêm de `src/data/timeline.json`, gerado a partir da narração real.
 Trocar a voz ou o texto re-sincroniza cenas, destaques, legendas e trilha.
@@ -83,6 +83,14 @@ npm run music    # trilha e efeitos casados com a nova linha do tempo
 
 ### Narração
 
+**A versão entregue usa a narração fornecida** (`narration/narracao-original.wav`), sem alterar velocidade nem
+cortar a voz. `npm run align` (`scripts/align_narration.py`) mede as pausas reais da gravação e alinha cada fala,
+corte de legenda e palavra-chave do roteiro ao áudio (DTW sobre MFCC, usando o Kokoro só como referência
+acústica). A duração do vídeo é a do áudio mais 1,2 s para o fade final. Para trocar a gravação, substitua o
+arquivo (ou `narrationFile` em `src/config/script.json`) e rode `npm run align`, `npm run music`, `npm run render`.
+
+Para gerar a voz por TTS em vez de usar uma gravação:
+
 `scripts/narrate.py` aceita dois provedores:
 
 - **`voicestudio`** — backend local do VoiceStudio (`http://localhost:3900`, `/v1/audio/speech`). Ajuste `voice`
@@ -91,8 +99,6 @@ npm run music    # trilha e efeitos casados com a nova linha do tempo
   `voices-v1.0.bin` (releases de `thewh1teagle/kokoro-onnx`) em `video/.models/` ou defina `KOKORO_MODEL_DIR`.
 
 `--provider auto` usa o VoiceStudio se ele responder em `/health`; senão, Kokoro.
-**A narração entregue foi gerada com Kokoro**, porque o VoiceStudio roda na máquina do usuário e não estava
-acessível no ambiente em nuvem onde o vídeo foi produzido.
 
 As legendas são cortadas em frases curtas. Cortes em pontuação caem no meio da pausa real; os demais são
 achados sintetizando o trecho inicial à parte e alinhando-o à fala completa (DTW).

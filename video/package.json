@@ -6,7 +6,8 @@
   "scripts": {
     "studio": "remotion studio src/index.ts",
     "assets": "node scripts/prepare-captures.mjs",
-    "voice": "node scripts/narrate.mjs",
+    "voice": "python3 scripts/narrate.py --provider auto",
+    "align": "python3 scripts/align_narration.py",
     "music": "python3 scripts/make_audio.py",
     "srt": "node scripts/build-srt.mjs",
     "render:preview": "node scripts/render.mjs preview",

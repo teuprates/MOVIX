@@ -46,3 +46,12 @@ export function lineEnd(scene: SceneId, lineId: string) {
 
 /** Momento do impacto do logo dentro da cena "virada" (o mesmo marcador usado pela trilha). */
 export const REVEAL_OFFSET = toFrames(0.9);
+
+/** Quadro (relativo à cena) em que uma palavra-chave marcada no roteiro ("marks") é dita na narração. */
+export function markAt(scene: SceneId, lineId: string, name: string) {
+  const l = raw.lines.find((x) => x.id === lineId) as { marks?: Record<string, number>; start: number } | undefined;
+  if (!l) throw new Error(`Fala desconhecida: ${lineId}`);
+  const t = l.marks?.[name];
+  if (t === undefined) throw new Error(`Marca "${name}" ausente em ${lineId} — rode scripts/align_narration.py`);
+  return toFrames(t) - sceneRange(scene).from;
+}

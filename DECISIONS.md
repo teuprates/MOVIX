@@ -75,3 +75,7 @@ Formato: **ID — decisão** · motivo · consequência.
   alvos de toque ≥ 44 px no celular; áreas seguras (`env(safe-area-inset-*)`) no header, barras e drawer (em portal).
 - **D-026 — Sem rede, nada é simulado.** `blockIfOffline()` impede Server Actions offline com aviso explícito; falhas de
   rede viram mensagem de "tente novamente". Formulário de veículo em etapas no celular (um único envio, validação por etapa).
+- **D-027 — Mapa base da OpenFreeMap no rastreamento (atualiza D-014).** Os tiles raster da CARTO foram trocados pelo estilo
+  vetorial gratuito e sem chave da OpenFreeMap (`positron` no tema claro, `dark` no escuro), renderizado pelo MapLibre GL como
+  camada do Leaflet (`@maplibre/maplibre-gl-leaflet`). Rotas, geofence e marcadores simulados continuam em react-leaflet.
+  (Proposta na PR #1 originalmente como D-023; renumerada ao integrar com a `main`, que já usava D-023–D-026.)

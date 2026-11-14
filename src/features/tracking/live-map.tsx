@@ -1,7 +1,9 @@
 "use client";
 import "leaflet/dist/leaflet.css";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { maplibreGL } from "@maplibre/maplibre-gl-leaflet";
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { Circle, CircleMarker, MapContainer, Polyline, TileLayer, Tooltip, useMap } from "react-leaflet";
+import { Circle, CircleMarker, MapContainer, Polyline, Tooltip, useMap } from "react-leaflet";
 import { elapsedSeconds, getRoute, insideGeofence, positionAt, type LatLng } from "@/lib/domain/tracking";
 
 export type SimVehicle = {
@@ -21,6 +23,29 @@ function Fit({ center }: { center: LatLng }) {
   useEffect(() => {
     map.setView(center, map.getZoom());
   }, [center, map]);
+  return null;
+}
+
+/**
+ * Mapa base vetorial da OpenFreeMap (https://openfreemap.org) — gratuito, sem chave de API, dados OpenStreetMap.
+ * Renderizado pelo MapLibre GL como uma camada do Leaflet; as rotas, geofence e marcadores continuam no Leaflet.
+ */
+const OPENFREEMAP_STYLE = { light: "https://tiles.openfreemap.org/styles/positron", dark: "https://tiles.openfreemap.org/styles/dark" };
+const OPENFREEMAP_ATTRIBUTION =
+  '<a href="https://openfreemap.org" target="_blank" rel="noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noreferrer">OpenMapTiles</a> Dados de <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>';
+
+function OpenFreeMapLayer({ dark }: { dark: boolean }) {
+  const map = useMap();
+  useEffect(() => {
+    const layer = maplibreGL({
+      style: dark ? OPENFREEMAP_STYLE.dark : OPENFREEMAP_STYLE.light,
+      // O plugin repassa customAttribution para o controle de atribuição do Leaflet.
+      attributionControl: { customAttribution: OPENFREEMAP_ATTRIBUTION },
+    }).addTo(map);
+    return () => {
+      layer.remove();
+    };
+  }, [map, dark]);
   return null;
 }
 
@@ -63,11 +88,7 @@ export function LiveMap({ vehicles, selected, onState, height = 420 }: { vehicle
   return (
     <div className="relative overflow-hidden rounded-xl border border-border" style={{ height }}>
       <MapContainer center={center} zoom={13} scrollWheelZoom={false} className="size-full" attributionControl>
-        <TileLayer
-          key={dark ? "d" : "l"}
-          url={`https://{s}.basemaps.cartocdn.com/${dark ? "dark_all" : "light_all"}/{z}/{x}/{y}{r}.png`}
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
-        />
+        <OpenFreeMapLayer dark={dark} />
         <Fit center={center} />
         {states.map((s, i) => {
           const color = COLORS[i % COLORS.length];

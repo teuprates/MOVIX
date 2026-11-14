@@ -6,6 +6,7 @@ Vídeo comercial narrado do MOVIX: **1920×1080, 30 fps, ~80 s**, H.264 + AAC, c
 |---|---|
 | Vídeo final (1080p) | `out/movix-pitch.mp4` |
 | Preview leve para validação (540p) | `out/movix-pitch-preview.mp4` |
+| Versão sem narração (trilha + legendas) | `out/movix-pitch-sem-narracao.mp4` — `npm run render:sem-narracao` |
 | Legendas | `out/movix-pitch.srt` |
 | Capturas, marca, fontes, voz, trilha e efeitos | `public/` |
 

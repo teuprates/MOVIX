@@ -37,7 +37,7 @@ function musicVolume(frame: number) {
 
 const WHOOSH_AT: SceneId[] = ["painel", "frota", "contratos", "financeiro", "mobile", "fechamento"];
 
-export const MovixPitch: React.FC<{ captions?: boolean }> = ({ captions = true }) => {
+export const MovixPitch: React.FC<{ captions?: boolean; narration?: boolean }> = ({ captions = true, narration = true }) => {
   const reveal = sceneRange("virada").from + REVEAL_OFFSET;
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
@@ -53,8 +53,9 @@ export const MovixPitch: React.FC<{ captions?: boolean }> = ({ captions = true }
       })}
       {captions && <Captions />}
 
-      <Audio src={AUDIO.narration} volume={1} />
-      <Audio src={AUDIO.music} volume={musicVolume} />
+      {narration && <Audio src={AUDIO.narration} volume={1} />}
+      {/* sem voz, a trilha toca aberta e constante */}
+      <Audio src={AUDIO.music} volume={narration ? musicVolume : MUSIC_OPEN} />
       {WHOOSH_AT.map((id) => (
         <Sequence key={id} name={`whoosh-${id}`} from={sceneRange(id).from - 4} durationInFrames={30}>
           <Audio src={AUDIO.whoosh} volume={0.2} />

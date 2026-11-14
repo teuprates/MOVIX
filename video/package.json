@@ -11,6 +11,7 @@
     "srt": "node scripts/build-srt.mjs",
     "render:preview": "node scripts/render.mjs preview",
     "render": "node scripts/render.mjs final",
+    "render:sem-narracao": "node scripts/render.mjs sem-narracao",
     "stills": "node scripts/stills.mjs",
     "typecheck": "tsc --noEmit"
   },

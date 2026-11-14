@@ -13,12 +13,13 @@ import { browserExecutable } from "./browser.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const mode = process.argv[2] === "preview" ? "preview" : "final";
+const silent = process.argv[2] === "sem-narracao"; // só trilha + legendas
 const tmp = path.join(root, "out/.tmp");
 mkdirSync(tmp, { recursive: true });
 const raw = path.join(tmp, `${mode}.mp4`);
-const out = path.join(root, "out", mode === "preview" ? "movix-pitch-preview.mp4" : "movix-pitch.mp4");
+const out = path.join(root, "out", silent ? "movix-pitch-sem-narracao.mp4" : mode === "preview" ? "movix-pitch-preview.mp4" : "movix-pitch.mp4");
 
-const args = ["remotion", "render", "src/index.ts", "MovixPitch", raw, "--codec=h264", "--pixel-format=yuv420p", "--audio-codec=aac", "--audio-bitrate=320k", "--log=error"];
+const args = ["remotion", "render", "src/index.ts", silent ? "MovixPitchSemNarracao" : "MovixPitch", raw, "--codec=h264", "--pixel-format=yuv420p", "--audio-codec=aac", "--audio-bitrate=320k", "--log=error"];
 args.push(...(mode === "preview" ? ["--scale=0.5", "--crf=27", "--jpeg-quality=80"] : ["--crf=16", "--jpeg-quality=96"]));
 const browser = browserExecutable();
 if (browser) args.push(`--browser-executable=${browser}`);

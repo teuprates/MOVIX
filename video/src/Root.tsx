@@ -16,7 +16,8 @@ Promise.all(FONTS.map((f) => loadFont({ family: f.family, url: f.url, weight: f.
 
 export const Root: React.FC = () => (
   <>
-    <Composition id="MovixPitch" component={MovixPitch} durationInFrames={TOTAL_FRAMES} fps={VIDEO.fps} width={VIDEO.width} height={VIDEO.height} defaultProps={{ captions: true }} />
-    <Composition id="MovixPitchSemLegenda" component={MovixPitch} durationInFrames={TOTAL_FRAMES} fps={VIDEO.fps} width={VIDEO.width} height={VIDEO.height} defaultProps={{ captions: false }} />
+    <Composition id="MovixPitch" component={MovixPitch} durationInFrames={TOTAL_FRAMES} fps={VIDEO.fps} width={VIDEO.width} height={VIDEO.height} defaultProps={{ captions: true, narration: true }} />
+    <Composition id="MovixPitchSemLegenda" component={MovixPitch} durationInFrames={TOTAL_FRAMES} fps={VIDEO.fps} width={VIDEO.width} height={VIDEO.height} defaultProps={{ captions: false, narration: true }} />
+    <Composition id="MovixPitchSemNarracao" component={MovixPitch} durationInFrames={TOTAL_FRAMES} fps={VIDEO.fps} width={VIDEO.width} height={VIDEO.height} defaultProps={{ captions: true, narration: false }} />
   </>
 );

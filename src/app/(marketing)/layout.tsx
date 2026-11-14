@@ -13,6 +13,7 @@ export default function MarketingLayout({ children }: LayoutProps<"/">) {
             <Link href="/#pilares" className="hover:text-fg">Como funciona</Link>
             <Link href="/#recursos" className="hover:text-fg">Recursos</Link>
             <Link href="/#seguranca" className="hover:text-fg">Segurança</Link>
+            <Link href="/#app" className="hover:text-fg">App</Link>
             <Link href="/demonstracao" className="hover:text-fg">Demo</Link>
           </nav>
           <div className="ml-auto flex items-center gap-2">

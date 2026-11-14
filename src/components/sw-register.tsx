@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { WifiOff } from "lucide-react";
 import { toast } from "sonner";
+// Efeito colateral: captura `beforeinstallprompt` o mais cedo possível em qualquer página.
+import "@/lib/pwa-install";
 
 /**
  * Registra o service worker (produção), avisa quando há versão nova e mostra o estado da conexão.

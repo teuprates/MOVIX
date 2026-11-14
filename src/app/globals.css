@@ -221,6 +221,16 @@ p {
   animation: pop-in 160ms var(--ease-out) both;
 }
 
+/* Seção "Instalar aplicativo" da landing: halo pulsando no botão e barras do mockup crescendo */
+@keyframes install-glow {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.04); }
+}
+@keyframes phone-bar {
+  from { transform: scaleY(0.08); }
+  to { transform: none; }
+}
+
 /* Usado apenas na landing (marketing, modo Persuade) */
 @utility text-gradient {
   background: linear-gradient(100deg, #ffffff 0%, #9cc2ff 40%, #00d1ff 100%);

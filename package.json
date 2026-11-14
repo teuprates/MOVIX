@@ -13,7 +13,8 @@
     "test:e2e": "playwright test",
     "db:push": "supabase db push --db-url \"$SUPABASE_DB_URL\"",
     "seed": "tsx --env-file=.env.local supabase/seed/seed.ts",
-    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+    "check": "npm run lint && npm run typecheck && npm test && npm run build",
+    "seed:passwords": "tsx --env-file=.env.local supabase/seed/seed.ts --passwords-only"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",

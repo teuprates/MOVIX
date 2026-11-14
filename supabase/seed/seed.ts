@@ -1,6 +1,7 @@
 /**
  * Seed idempotente de DEMONSTRAÇÃO (dados 100% sintéticos).
- *   npm run seed          (lê .env.local)
+ *   npm run seed          (lê .env.local; recria dados operacionais)
+ *   npm run seed:passwords (somente senhas de usuários existentes + teste de login)
  * Requer: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (ou SUPABASE_SECRET_KEY) e SEED_USER_PASSWORD.
  * Pode ser executado várias vezes: reaproveita usuários/locadoras e recria os dados operacionais das locadoras demo.
  */
@@ -44,7 +45,8 @@ async function ensureUser(email: string, fullName: string, role: string) {
     if (error) throw error;
     const found = data.users.find((u) => u.email === email);
     if (found) {
-      await db.auth.admin.updateUserById(found.id, { password, email_confirm: true });
+      const { error } = await db.auth.admin.updateUserById(found.id, { password });
+      if (error) throw new Error("Falha ao atualizar senha de conta demo.");
       return found.id;
     }
     if (data.users.length < 200) break;
@@ -93,7 +95,58 @@ async function membership(orgId: string, userId: string, status: "approved" | "p
   );
 }
 
+
+/** Rotação isolada: nunca cria usuários nem altera dados operacionais. */
+async function rotateDemoPasswords() {
+  const targets = Object.values(SEED_USERS);
+  const matches = new Map<string, string[]>();
+  for (let page = 1; ; page++) {
+    const { data, error } = await db.auth.admin.listUsers({ page, perPage: 200 });
+    if (error) throw new Error("Falha ao consultar usuários.");
+    for (const user of data.users) {
+      if (targets.some((target) => target.email === user.email)) {
+        const ids = matches.get(user.email!) ?? [];
+        matches.set(user.email!, [...ids, user.id]);
+      }
+    }
+    if (data.users.length < 200) break;
+  }
+  // Valida a lista inteira antes da primeira alteração. Não usa correspondência por domínio.
+  for (const target of targets) {
+    if (matches.get(target.email)?.length !== 1) {
+      throw new Error("Conta demo ausente ou ambígua; nenhuma senha foi alterada.");
+    }
+  }
+  let failed = false;
+  for (const target of targets) {
+    const id = matches.get(target.email)![0];
+    const { error } = await db.auth.admin.updateUserById(id, { password });
+    if (error) {
+      failed = true;
+      console.error(`Falha na alteração: ${target.email}`);
+      continue;
+    }
+    const client = createClient(url!, key!, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    });
+    const { data, error: loginError } = await client.auth.signInWithPassword({
+      email: target.email, password: password!,
+    });
+    const passed = !loginError && data.user?.id === id;
+    const { error: logoutError } = data.session
+      ? await client.auth.signOut({ scope: "local" })
+      : { error: null };
+    if (!passed || logoutError) failed = true;
+    console.log(`${target.email}: senha atualizada; login ${passed ? "OK" : "FALHOU"}; encerramento ${logoutError ? "FALHOU" : "OK"}`);
+  }
+  if (failed) throw new Error("Rotação ou verificação incompleta.");
+}
+
 async function main() {
+  if (process.argv.includes("--passwords-only")) {
+    await rotateDemoPasswords();
+    return;
+  }
   const ids: Record<keyof typeof SEED_USERS, string> = {} as never;
   for (const [k, u] of Object.entries(SEED_USERS)) ids[k as keyof typeof SEED_USERS] = await ensureUser(u.email, u.name, u.role);
   await db.from("profiles").update({ suspended_at: null }).in("id", Object.values(ids));
@@ -128,7 +181,7 @@ async function main() {
   console.log(`Convite demo: /convite/${code}`);
 }
 
-main().catch((e) => {
-  console.error("Falha no seed:", e.message ?? e);
+main().catch(() => {
+  console.error("Falha no seed ou na rotação. Verifique a configuração e os resultados acima; detalhes sensíveis foram omitidos.");
   process.exit(1);
 });

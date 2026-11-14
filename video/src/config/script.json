@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "title": "MOVIX — vídeo pitch",
+    "language": "pt-BR",
+    "fps": 30,
+    "width": 1920,
+    "height": 1080
+  },
+  "voice": {
+    "kokoro": { "voice": "pf_dora", "lang": "pt-br", "speed": 1.0 },
+    "voicestudio": { "baseUrl": "http://localhost:3900", "model": "tts-1", "voice": "alloy" }
+  },
+  "scenes": [
+    {
+      "id": "problema",
+      "lead": 0.9,
+      "tail": 0.55,
+      "lines": [
+        { "id": "p1", "text": "Gerenciar uma frota de locação parece simples.", "captions": ["Gerenciar uma frota de locação", "parece simples."], "gap": 0.45 },
+        { "id": "p2", "text": "Até os veículos ficarem numa planilha, os contratos em outra pasta, e as parcelas em conversas espalhadas.", "captions": ["Até os veículos ficarem numa planilha,", "os contratos em outra pasta,", "e as parcelas em conversas espalhadas."], "gap": 0.5 },
+        { "id": "p3", "text": "Quem devolve o carro esta semana? Qual parcela já venceu?", "captions": ["Quem devolve o carro esta semana?", "Qual parcela já venceu?"], "gap": 0.5 },
+        { "id": "p4", "text": "No fim, cada decisão vira uma busca.", "captions": ["No fim, cada decisão", "vira uma busca."], "gap": 0 }
+      ]
+    },
+    {
+      "id": "virada",
+      "lead": 1.5,
+      "tail": 0.7,
+      "lines": [
+        { "id": "v1", "text": "Conheça o MOVIX.", "captions": ["Conheça o MOVIX."], "gap": 0.75 },
+        { "id": "v2", "text": "A plataforma que reúne veículos, contratos, locatários e financeiro da sua locadora, em um só lugar.", "captions": ["A plataforma que reúne veículos, contratos,", "locatários e financeiro da sua locadora,", "em um só lugar."], "gap": 0 }
+      ]
+    },
+    {
+      "id": "painel",
+      "lead": 0.7,
+      "tail": 0.6,
+      "lines": [
+        { "id": "d1", "text": "No painel, a frota aparece como está agora: disponível, reservada, alugada ou em manutenção.", "captions": ["No painel, a frota aparece como está agora:", "disponível, reservada,", "alugada ou em manutenção."], "gap": 0.45 },
+        { "id": "d2", "text": "E o que precisa de atenção já vem na frente.", "captions": ["E o que precisa de atenção", "já vem na frente."], "gap": 0 }
+      ]
+    },
+    {
+      "id": "frota",
+      "lead": 0.7,
+      "tail": 0.6,
+      "lines": [
+        { "id": "f1", "text": "Cada veículo tem status, saúde estimada e valor da diária, sempre à mão.", "captions": ["Cada veículo tem status, saúde estimada", "e valor da diária, sempre à mão."], "gap": 0 }
+      ]
+    },
+    {
+      "id": "contratos",
+      "lead": 0.7,
+      "tail": 0.6,
+      "lines": [
+        { "id": "c1", "text": "Os contratos mostram período, valor e situação, com aceite eletrônico do locatário.", "captions": ["Os contratos mostram período, valor e situação,", "com aceite eletrônico do locatário."], "gap": 0 }
+      ]
+    },
+    {
+      "id": "financeiro",
+      "lead": 0.7,
+      "tail": 0.6,
+      "lines": [
+        { "id": "n1", "text": "No financeiro, receitas, despesas e lucro estimado por veículo ficam lado a lado.", "captions": ["No financeiro, receitas, despesas", "e lucro estimado por veículo", "ficam lado a lado."], "gap": 0 }
+      ]
+    },
+    {
+      "id": "mobile",
+      "lead": 0.7,
+      "tail": 0.7,
+      "lines": [
+        { "id": "m1", "text": "E tudo isso cabe no celular.", "captions": ["E tudo isso cabe no celular."], "gap": 0.4 },
+        { "id": "m2", "text": "O MOVIX pode ser instalado como aplicativo, para o proprietário e para o locatário.", "captions": ["O MOVIX pode ser instalado como aplicativo,", "para o proprietário e para o locatário."], "gap": 0 }
+      ]
+    },
+    {
+      "id": "fechamento",
+      "lead": 0.8,
+      "tail": 4.6,
+      "lines": [
+        { "id": "e1", "text": "Mais controle.", "captions": ["Mais controle."], "gap": 0.35 },
+        { "id": "e2", "text": "Mais clareza.", "captions": ["Mais clareza."], "gap": 0.35 },
+        { "id": "e3", "text": "Mais organização para a sua frota.", "captions": ["Mais organização para a sua frota."], "gap": 1.3 },
+        { "id": "e4", "text": "MOVIX. Sua frota sempre conectada.", "captions": ["MOVIX.", "Sua frota sempre conectada."], "gap": 1.2 },
+        { "id": "e5", "text": "Conheça o MOVIX.", "captions": ["Conheça o MOVIX."], "gap": 0 }
+      ]
+    }
+  ]
+}

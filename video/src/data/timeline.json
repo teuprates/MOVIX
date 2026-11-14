@@ -1,0 +1,453 @@
+{
+  "fps": 30,
+  "durationInSeconds": 80.067,
+  "durationInFrames": 2402,
+  "provider": "kokoro",
+  "voice": "pf_dora",
+  "scenes": [
+    {
+      "id": "problema",
+      "start": 0.0,
+      "end": 17.6
+    },
+    {
+      "id": "virada",
+      "start": 17.6,
+      "end": 27.433
+    },
+    {
+      "id": "painel",
+      "start": 27.433,
+      "end": 37.6
+    },
+    {
+      "id": "frota",
+      "start": 37.6,
+      "end": 43.233
+    },
+    {
+      "id": "contratos",
+      "start": 43.233,
+      "end": 49.367
+    },
+    {
+      "id": "financeiro",
+      "start": 49.367,
+      "end": 55.633
+    },
+    {
+      "id": "mobile",
+      "start": 55.633,
+      "end": 63.933
+    },
+    {
+      "id": "fechamento",
+      "start": 63.933,
+      "end": 80.067
+    }
+  ],
+  "lines": [
+    {
+      "id": "p1",
+      "scene": "problema",
+      "text": "Gerenciar uma frota de locação parece simples.",
+      "start": 0.9,
+      "end": 3.806,
+      "cues": [
+        0.9,
+        2.84
+      ]
+    },
+    {
+      "id": "p2",
+      "scene": "problema",
+      "text": "Até os veículos ficarem numa planilha, os contratos em outra pasta, e as parcelas em conversas espalhadas.",
+      "start": 4.267,
+      "end": 10.773,
+      "cues": [
+        4.267,
+        6.517,
+        8.377
+      ]
+    },
+    {
+      "id": "p3",
+      "scene": "problema",
+      "text": "Quem devolve o carro esta semana? Qual parcela já venceu?",
+      "start": 11.267,
+      "end": 14.362,
+      "cues": [
+        11.267,
+        13.052
+      ]
+    },
+    {
+      "id": "p4",
+      "scene": "problema",
+      "text": "No fim, cada decisão vira uma busca.",
+      "start": 14.867,
+      "end": 17.05,
+      "cues": [
+        14.867,
+        16.227
+      ]
+    },
+    {
+      "id": "v1",
+      "scene": "virada",
+      "text": "Conheça o MOVIX.",
+      "start": 19.1,
+      "end": 20.263,
+      "cues": [
+        19.1
+      ]
+    },
+    {
+      "id": "v2",
+      "scene": "virada",
+      "text": "A plataforma que reúne veículos, contratos, locatários e financeiro da sua locadora, em um só lugar.",
+      "start": 21.0,
+      "end": 26.73,
+      "cues": [
+        21.0,
+        23.255,
+        25.765
+      ]
+    },
+    {
+      "id": "d1",
+      "scene": "painel",
+      "text": "No painel, a frota aparece como está agora: disponível, reservada, alugada ou em manutenção.",
+      "start": 28.133,
+      "end": 33.777,
+      "cues": [
+        28.133,
+        30.453,
+        32.023
+      ]
+    },
+    {
+      "id": "d2",
+      "scene": "painel",
+      "text": "E o que precisa de atenção já vem na frente.",
+      "start": 34.233,
+      "end": 37.007,
+      "cues": [
+        34.233,
+        35.863
+      ]
+    },
+    {
+      "id": "f1",
+      "scene": "frota",
+      "text": "Cada veículo tem status, saúde estimada e valor da diária, sempre à mão.",
+      "start": 38.3,
+      "end": 42.647,
+      "cues": [
+        38.3,
+        40.76
+      ]
+    },
+    {
+      "id": "c1",
+      "scene": "contratos",
+      "text": "Os contratos mostram período, valor e situação, com aceite eletrônico do locatário.",
+      "start": 43.933,
+      "end": 48.778,
+      "cues": [
+        43.933,
+        46.933
+      ]
+    },
+    {
+      "id": "n1",
+      "scene": "financeiro",
+      "text": "No financeiro, receitas, despesas e lucro estimado por veículo ficam lado a lado.",
+      "start": 50.067,
+      "end": 55.041,
+      "cues": [
+        50.067,
+        52.447,
+        53.887
+      ]
+    },
+    {
+      "id": "m1",
+      "scene": "mobile",
+      "text": "E tudo isso cabe no celular.",
+      "start": 56.333,
+      "end": 58.094,
+      "cues": [
+        56.333
+      ]
+    },
+    {
+      "id": "m2",
+      "scene": "mobile",
+      "text": "O MOVIX pode ser instalado como aplicativo, para o proprietário e para o locatário.",
+      "start": 58.5,
+      "end": 63.224,
+      "cues": [
+        58.5,
+        61.225
+      ]
+    },
+    {
+      "id": "e1",
+      "scene": "fechamento",
+      "text": "Mais controle.",
+      "start": 64.733,
+      "end": 65.789,
+      "cues": [
+        64.733
+      ]
+    },
+    {
+      "id": "e2",
+      "scene": "fechamento",
+      "text": "Mais clareza.",
+      "start": 66.133,
+      "end": 67.284,
+      "cues": [
+        66.133
+      ]
+    },
+    {
+      "id": "e3",
+      "scene": "fechamento",
+      "text": "Mais organização para a sua frota.",
+      "start": 67.633,
+      "end": 69.698,
+      "cues": [
+        67.633
+      ]
+    },
+    {
+      "id": "e4",
+      "scene": "fechamento",
+      "text": "MOVIX. Sua frota sempre conectada.",
+      "start": 71.0,
+      "end": 73.095,
+      "cues": [
+        71.0,
+        71.56
+      ]
+    },
+    {
+      "id": "e5",
+      "scene": "fechamento",
+      "text": "Conheça o MOVIX.",
+      "start": 74.3,
+      "end": 75.463,
+      "cues": [
+        74.3
+      ]
+    }
+  ],
+  "captions": [
+    {
+      "line": "p1",
+      "text": "Gerenciar uma frota de locação",
+      "start": 0.9,
+      "end": 2.84
+    },
+    {
+      "line": "p1",
+      "text": "parece simples.",
+      "start": 2.84,
+      "end": 4.056
+    },
+    {
+      "line": "p2",
+      "text": "Até os veículos ficarem numa planilha,",
+      "start": 4.267,
+      "end": 6.517
+    },
+    {
+      "line": "p2",
+      "text": "os contratos em outra pasta,",
+      "start": 6.517,
+      "end": 8.377
+    },
+    {
+      "line": "p2",
+      "text": "e as parcelas em conversas espalhadas.",
+      "start": 8.377,
+      "end": 11.023
+    },
+    {
+      "line": "p3",
+      "text": "Quem devolve o carro esta semana?",
+      "start": 11.267,
+      "end": 13.052
+    },
+    {
+      "line": "p3",
+      "text": "Qual parcela já venceu?",
+      "start": 13.052,
+      "end": 14.612
+    },
+    {
+      "line": "p4",
+      "text": "No fim, cada decisão",
+      "start": 14.867,
+      "end": 16.227
+    },
+    {
+      "line": "p4",
+      "text": "vira uma busca.",
+      "start": 16.227,
+      "end": 17.3
+    },
+    {
+      "line": "v1",
+      "text": "Conheça o MOVIX.",
+      "start": 19.1,
+      "end": 20.513
+    },
+    {
+      "line": "v2",
+      "text": "A plataforma que reúne veículos, contratos,",
+      "start": 21.0,
+      "end": 23.255
+    },
+    {
+      "line": "v2",
+      "text": "locatários e financeiro da sua locadora,",
+      "start": 23.255,
+      "end": 25.765
+    },
+    {
+      "line": "v2",
+      "text": "em um só lugar.",
+      "start": 25.765,
+      "end": 26.98
+    },
+    {
+      "line": "d1",
+      "text": "No painel, a frota aparece como está agora:",
+      "start": 28.133,
+      "end": 30.453
+    },
+    {
+      "line": "d1",
+      "text": "disponível, reservada,",
+      "start": 30.453,
+      "end": 32.023
+    },
+    {
+      "line": "d1",
+      "text": "alugada ou em manutenção.",
+      "start": 32.023,
+      "end": 34.027
+    },
+    {
+      "line": "d2",
+      "text": "E o que precisa de atenção",
+      "start": 34.233,
+      "end": 35.863
+    },
+    {
+      "line": "d2",
+      "text": "já vem na frente.",
+      "start": 35.863,
+      "end": 37.257
+    },
+    {
+      "line": "f1",
+      "text": "Cada veículo tem status, saúde estimada",
+      "start": 38.3,
+      "end": 40.76
+    },
+    {
+      "line": "f1",
+      "text": "e valor da diária, sempre à mão.",
+      "start": 40.76,
+      "end": 42.897
+    },
+    {
+      "line": "c1",
+      "text": "Os contratos mostram período, valor e situação,",
+      "start": 43.933,
+      "end": 46.933
+    },
+    {
+      "line": "c1",
+      "text": "com aceite eletrônico do locatário.",
+      "start": 46.933,
+      "end": 49.028
+    },
+    {
+      "line": "n1",
+      "text": "No financeiro, receitas, despesas",
+      "start": 50.067,
+      "end": 52.447
+    },
+    {
+      "line": "n1",
+      "text": "e lucro estimado por veículo",
+      "start": 52.447,
+      "end": 53.887
+    },
+    {
+      "line": "n1",
+      "text": "ficam lado a lado.",
+      "start": 53.887,
+      "end": 55.291
+    },
+    {
+      "line": "m1",
+      "text": "E tudo isso cabe no celular.",
+      "start": 56.333,
+      "end": 58.344
+    },
+    {
+      "line": "m2",
+      "text": "O MOVIX pode ser instalado como aplicativo,",
+      "start": 58.5,
+      "end": 61.225
+    },
+    {
+      "line": "m2",
+      "text": "para o proprietário e para o locatário.",
+      "start": 61.225,
+      "end": 63.474
+    },
+    {
+      "line": "e1",
+      "text": "Mais controle.",
+      "start": 64.733,
+      "end": 66.039
+    },
+    {
+      "line": "e2",
+      "text": "Mais clareza.",
+      "start": 66.133,
+      "end": 67.534
+    },
+    {
+      "line": "e3",
+      "text": "Mais organização para a sua frota.",
+      "start": 67.633,
+      "end": 69.948
+    },
+    {
+      "line": "e4",
+      "text": "MOVIX.",
+      "start": 71.0,
+      "end": 71.56
+    },
+    {
+      "line": "e4",
+      "text": "Sua frota sempre conectada.",
+      "start": 71.56,
+      "end": 73.345
+    },
+    {
+      "line": "e5",
+      "text": "Conheça o MOVIX.",
+      "start": 74.3,
+      "end": 75.713
+    }
+  ]
+}

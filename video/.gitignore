@@ -1,0 +1,5 @@
+node_modules/
+.models/
+out/.tmp/
+out/stills/
+*.log

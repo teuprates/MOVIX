@@ -11,8 +11,8 @@ export const metadata: Metadata = { title: "Configurar locadora" };
 export default async function OnboardingPage() {
   const { profile } = await requireSession("/onboarding");
   return (
-    <div className="min-h-dvh bg-bg">
-      <header className="flex items-center justify-between border-b border-border px-4 py-3 sm:px-8">
+    <div className="min-h-dvh bg-bg px-safe">
+      <header className="flex items-center justify-between border-b border-border px-4 pb-3 pt-safe-3 sm:px-8">
         <Link href="/"><MovixLogo /></Link>
         <form action={signOut}><button className="text-sm text-muted hover:text-fg">Sair</button></form>
       </header>

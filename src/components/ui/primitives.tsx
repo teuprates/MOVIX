@@ -14,7 +14,7 @@ const buttonVariants = {
   danger: "bg-danger text-white hover:brightness-110",
   success: "bg-success text-white hover:brightness-110",
 } as const;
-const buttonSizes = { sm: "h-8 px-3 text-sm", md: "h-10 px-4 text-sm", lg: "h-12 px-6 text-base", icon: "size-9" } as const;
+const buttonSizes = { sm: "h-9 px-3 text-sm sm:h-8", md: "h-11 px-4 text-sm sm:h-10", lg: "h-12 px-6 text-base", icon: "size-10 sm:size-9" } as const;
 
 export type ButtonProps = ComponentProps<"button"> & {
   variant?: keyof typeof buttonVariants;
@@ -46,10 +46,10 @@ export function ButtonLink({
 
 /* ---------------------------------------------------------------- Inputs */
 const fieldBase =
-  "w-full rounded-lg border border-border bg-surface px-3 text-sm text-fg placeholder:text-subtle transition focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/25 disabled:opacity-60 aria-[invalid=true]:border-danger aria-[invalid=true]:ring-danger/20";
+  "w-full rounded-lg border border-border bg-surface px-3 text-base text-fg placeholder:text-subtle transition sm:text-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/25 disabled:opacity-60 aria-[invalid=true]:border-danger aria-[invalid=true]:ring-danger/20";
 
 export const Input = forwardRef<HTMLInputElement, ComponentProps<"input">>(function Input({ className, ...props }, ref) {
-  return <input ref={ref} className={cn(fieldBase, "h-10", props.type === "file" && "h-auto py-2", className)} {...props} />;
+  return <input ref={ref} className={cn(fieldBase, "h-11 sm:h-10", props.type === "file" && "h-auto py-2", className)} {...props} />;
 });
 
 export const Textarea = forwardRef<HTMLTextAreaElement, ComponentProps<"textarea">>(function Textarea({ className, ...props }, ref) {
@@ -57,7 +57,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, ComponentProps<"textarea
 });
 
 export const Select = forwardRef<HTMLSelectElement, ComponentProps<"select">>(function Select({ className, ...props }, ref) {
-  return <select ref={ref} className={cn(fieldBase, "h-10 pr-8", className)} {...props} />;
+  return <select ref={ref} className={cn(fieldBase, "h-11 pr-8 sm:h-10", className)} {...props} />;
 });
 
 export function Label({ className, ...props }: ComponentProps<"label">) {
@@ -220,20 +220,20 @@ export function Metric({ label, value, hint, icon: Icon, tone, size = "md" }: { 
         {Icon && <Icon className="size-3.5 shrink-0" aria-hidden />}
         {label}
       </p>
-      <p className={cn("mt-1.5 font-display font-semibold tabular-nums tracking-tight break-words text-fg", size === "lg" ? "text-[1.625rem] leading-8 sm:text-[1.875rem] sm:leading-9" : "text-[1.375rem] leading-7 sm:text-2xl", tone && valueTones[tone])}>{value}</p>
+      <p className={cn("mt-1.5 font-display font-semibold tabular-nums tracking-tight break-words text-fg", size === "lg" ? "text-[1.625rem] leading-8 sm:text-[1.875rem] sm:leading-9" : "text-lg leading-7 min-[400px]:text-xl sm:text-2xl", tone && valueTones[tone])}>{value}</p>
       {hint && <div className="mt-1 text-xs text-muted">{hint}</div>}
     </div>
   );
 }
 
 /** Grade dos indicadores: 1 coluna em telas estreitas, 2 a partir de 420px, uma linha a partir de lg. */
-export const metricGrid = "grid grid-cols-1 min-[420px]:grid-cols-2 lg:grid-flow-col lg:auto-cols-fr lg:grid-cols-none lg:divide-x lg:divide-border";
+export const metricGrid = "grid grid-cols-1 min-[340px]:grid-cols-2 lg:grid-flow-col lg:auto-cols-fr lg:grid-cols-none lg:divide-x lg:divide-border";
 export const metricCell = (i: number) =>
   cn(
-    "min-w-0 p-4 sm:p-5",
+    "min-w-0 p-3.5 sm:p-5",
     i > 0 && "border-t border-border",
-    i === 1 && "min-[420px]:border-t-0",
-    i % 2 === 1 && "min-[420px]:border-l min-[420px]:border-border",
+    i === 1 && "min-[340px]:border-t-0",
+    i % 2 === 1 && "min-[340px]:border-l min-[340px]:border-border",
     "lg:border-l-0 lg:border-t-0",
   );
 

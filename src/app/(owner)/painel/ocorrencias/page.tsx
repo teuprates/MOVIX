@@ -1,7 +1,10 @@
 import { AlertTriangle, Paperclip } from "lucide-react";
 import { requireOwner } from "@/lib/auth/context";
 import { dateTime } from "@/lib/format";
-import { INCIDENT_KIND } from "@/lib/labels";
+import { INCIDENT_KIND, INCIDENT_STATUS } from "@/lib/labels";
+import { filters } from "@/lib/filters";
+import { FilterBar } from "@/components/filters/filter-bar";
+import { LoadMore } from "@/components/filters/load-more";
 import { signedUrls } from "@/lib/storage";
 import { IncidentFormButton } from "@/features/operations/forms";
 import { updateIncidentStatus } from "@/features/operations/actions";
@@ -11,16 +14,35 @@ import { Badge, Card, EmptyState, PageHeader } from "@/components/ui/primitives"
 
 export const metadata = { title: "Ocorrências" };
 
-export default async function IncidentsPage() {
+const PAGE = 20;
+const STATUSES = Object.keys(INCIDENT_STATUS) as (keyof typeof INCIDENT_STATUS)[];
+const KINDS = Object.keys(INCIDENT_KIND) as (keyof typeof INCIDENT_KIND)[];
+
+export default async function IncidentsPage({ searchParams }: PageProps<"/painel/ocorrencias">) {
+  const sp = await searchParams;
+  const f = filters(sp);
+  const status = f.list("status", STATUSES);
+  const kind = f.oneOf("tipo", KINDS);
+  const vehicleId = f.uuid("veiculo");
+  const [from, to] = [f.date("de"), f.date("ate")];
+  const pages = f.pages();
   const { supabase, orgId } = await requireOwner();
-  const [{ data: incidents }, { data: vehicles }] = await Promise.all([
-    supabase
-      .from("incidents")
-      .select("*, vehicle:vehicles(brand, model, plate), rental:rentals(code), reporter:profiles(full_name), media:incident_media(storage_path)")
-      .eq("organization_id", orgId)
-      .order("created_at", { ascending: false }),
+  let iq = supabase
+    .from("incidents")
+    .select("*, vehicle:vehicles(brand, model, plate), rental:rentals(code), reporter:profiles(full_name), media:incident_media(storage_path)", { count: "exact" })
+    .eq("organization_id", orgId)
+    .order("created_at", { ascending: false })
+    .range(0, PAGE * pages - 1);
+  if (status.length) iq = iq.in("status", status);
+  if (kind) iq = iq.eq("kind", kind);
+  if (vehicleId) iq = iq.eq("vehicle_id", vehicleId);
+  if (from) iq = iq.gte("occurred_at", `${from}T00:00:00-03:00`);
+  if (to) iq = iq.lte("occurred_at", `${to}T23:59:59-03:00`);
+  const [{ data: incidents, count }, { data: vehicles }] = await Promise.all([
+    iq,
     supabase.from("vehicles").select("id, brand, model, plate").eq("organization_id", orgId).is("archived_at", null),
   ]);
+  const filtered = Boolean(status.length || kind || vehicleId || from || to);
   type Row = { id: string; kind: keyof typeof INCIDENT_KIND; title: string; description: string; occurred_at: string; location: string | null; status: string; resolution_notes: string | null; vehicle: { brand: string; model: string; plate: string }; rental: { code: string } | null; reporter: { full_name: string } | null; media: { storage_path: string }[] };
   const list = (incidents ?? []) as unknown as Row[];
   const urls = await signedUrls(supabase, "incident-media", list.flatMap((i) => i.media.map((m) => m.storage_path)), 600);
@@ -32,8 +54,20 @@ export default async function IncidentsPage() {
         description="Acidentes, panes e avarias registrados por você ou pelos locatários."
         actions={<IncidentFormButton vehicles={(vehicles ?? []).map((v) => ({ id: v.id, label: `${v.brand} ${v.model} · ${v.plate}` }))} />}
       />
+      <FilterBar
+        storageKey="ocorrencias"
+        quick={{ param: "status", multi: true, allLabel: "Todas", options: STATUSES.map((s) => ({ value: s, label: INCIDENT_STATUS[s] })) }}
+        fields={[
+          { type: "select", param: "tipo", label: "Tipo", options: KINDS.map((k) => ({ value: k, label: INCIDENT_KIND[k] })) },
+          { type: "select", param: "veiculo", label: "Veículo", options: (vehicles ?? []).map((v) => ({ value: v.id, label: `${v.brand} ${v.model} · ${v.plate}` })) },
+          { type: "dates", from: "de", to: "ate", label: "Ocorrida entre" },
+        ]}
+        shown={list.length}
+        total={count ?? list.length}
+        noun={["ocorrência", "ocorrências"]}
+      />
       {list.length === 0 ? (
-        <EmptyState icon={AlertTriangle} title="Nenhuma ocorrência" description="Quando houver registros, eles aparecem aqui com anexos e status." />
+        <EmptyState icon={AlertTriangle} title={filtered ? "Nenhuma ocorrência com esses filtros" : "Nenhuma ocorrência"} description={filtered ? "Remova algum filtro para ver mais registros." : "Quando houver registros, eles aparecem aqui com anexos e status."} />
       ) : (
         <ul className="space-y-3">
           {list.map((i) => (
@@ -76,6 +110,7 @@ export default async function IncidentsPage() {
           ))}
         </ul>
       )}
+      {(count ?? 0) > list.length && <Card className="mt-3"><LoadMore sp={sp} pages={pages} shown={list.length} total={count ?? list.length} path="/painel/ocorrencias" /></Card>}
     </>
   );
 }

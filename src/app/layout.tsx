@@ -39,12 +39,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-dvh">
         <a
           href="#conteudo"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-3 focus:py-2 focus:text-white"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-safe-3 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-3 focus:py-2 focus:text-white"
         >
           Pular para o conteúdo
         </a>
         {children}
-        <Toaster richColors closeButton position="top-right" toastOptions={{ duration: 4500 }} />
+        {/* Toasts no topo: descontar barra de status/Dynamic Island no PWA do iPhone (0 nos demais). */}
+        <Toaster
+          richColors
+          closeButton
+          position="top-right"
+          toastOptions={{ duration: 4500 }}
+          offset={{ top: "calc(var(--safe-top) + 24px)", right: "calc(var(--safe-right) + 24px)" }}
+          mobileOffset={{ top: "calc(var(--safe-top) + 12px)", right: "calc(var(--safe-right) + 16px)", left: "calc(var(--safe-left) + 16px)" }}
+        />
         <ServiceWorkerRegister />
       </body>
     </html>

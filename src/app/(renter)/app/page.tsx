@@ -6,6 +6,7 @@ import { INSPECTION_KIND } from "@/lib/labels";
 import { cn } from "@/lib/cn";
 import { RenterGate } from "@/features/renter/gate";
 import { RentalHero } from "@/features/renter/rental-hero";
+import { RentalSwitcher } from "@/features/renter/rental-switcher";
 import { coverPhotos } from "@/features/fleet/queries";
 import { PayInstallmentButton } from "@/features/contracts/payment-widgets";
 import { InspectionStatusBadge, RentalStatusBadge } from "@/components/status-badges";
@@ -76,7 +77,9 @@ export default async function RenterHome() {
           {active.length === 0 ? (
             <EmptyState icon={Car} title="Nenhuma locação ativa" description="Quando a locadora emitir um contrato, ele aparece aqui para você revisar e aceitar." />
           ) : (
-            active.map((r) => <RentalHero key={r.id} rental={r} photo={photos[r.vehicle.id]} today={today} pickupDone={done(r.id, "pickup")} returnDone={done(r.id, "return")} />)
+            <RentalSwitcher labels={active.map((r) => `${r.vehicle.model} · ${r.vehicle.plate.slice(0, 3)}-${r.vehicle.plate.slice(3)}`)}>
+              {active.map((r) => <RentalHero key={r.id} rental={r} photo={photos[r.vehicle.id]} today={today} pickupDone={done(r.id, "pickup")} returnDone={done(r.id, "return")} />)}
+            </RentalSwitcher>
           )}
         </section>
 

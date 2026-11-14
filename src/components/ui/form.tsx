@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 import type { FormState } from "@/lib/form-state";
 import { Button, Input, Label, Select, Textarea, type ButtonProps } from "./primitives";
 import { maskCep, maskCnpj, maskCpf, maskDocument, maskPhone, maskPlate } from "@/lib/validation/br";
+import { blockIfOffline } from "@/lib/offline";
 
 const ErrorsContext = createContext<Record<string, string[] | undefined>>({});
 
@@ -51,7 +52,16 @@ export function ActionForm({
 
   return (
     <ErrorsContext.Provider value={state?.ok ? {} : (state?.errors ?? {})}>
-      <form ref={ref} action={formAction} noValidate className={className} {...props}>
+      <form
+        ref={ref}
+        action={formAction}
+        noValidate
+        className={className}
+        onSubmit={(e) => {
+          if (blockIfOffline()) e.preventDefault();
+        }}
+        {...props}
+      >
         {state?.message && !state.ok && (
           <p role="alert" className="mb-4 rounded-lg border border-danger/25 bg-danger-soft px-3 py-2 text-sm text-danger">
             {state.message}

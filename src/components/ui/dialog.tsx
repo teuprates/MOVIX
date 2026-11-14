@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import type { FormState } from "@/lib/form-state";
 import { Button, Textarea, type ButtonProps } from "./primitives";
+import { blockIfOffline, networkErrorMessage } from "@/lib/offline";
 
 /** Modal acessível baseado em <dialog> nativo (foco preso, Esc fecha, backdrop). */
 export function Modal({ open, onClose, title, description, children, className }: {
@@ -30,12 +31,15 @@ export function Modal({ open, onClose, title, description, children, className }
       onClick={(e) => e.target === ref.current && onClose()}
       aria-labelledby="modal-title"
       className={cn(
-        "m-auto w-[min(92vw,34rem)] rounded-2xl border border-border bg-surface p-0 text-fg shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm",
+        // Celular: bottom sheet ancorado embaixo (alcance do polegar, respeita a barra de gestos). sm+: modal central.
+        "m-auto w-[min(92vw,34rem)] rounded-2xl border border-border bg-surface p-0 text-fg shadow-pop backdrop:bg-[#02040a]/60 backdrop:backdrop-blur-[2px] open:animate-pop",
+        "max-sm:mb-0 max-sm:max-h-[calc(100dvh-var(--safe-top)-0.75rem)] max-sm:w-full max-sm:max-w-full max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0 max-sm:open:animate-[sheet-up_220ms_var(--ease-out)_both]",
         className,
       )}
     >
       {open && (
-        <div className="p-5">
+        <div className="p-5 max-sm:pb-safe-5">
+          <div aria-hidden className="-mt-2 mb-3 flex justify-center sm:hidden"><span className="h-1 w-10 rounded-full bg-border-strong" /></div>
           <div className="mb-4 flex items-start justify-between gap-3">
             <div>
               <h2 id="modal-title" className="font-display text-lg font-semibold">{title}</h2>
@@ -88,9 +92,10 @@ export function ConfirmAction({
   const [pending, start] = useTransition();
   const router = useRouter();
 
-  const run = () =>
+  const run = () => {
+    if (blockIfOffline()) return;
     start(async () => {
-      const res = await action(withNotes ? notes : undefined);
+      const res = await action(withNotes ? notes : undefined).catch((e) => ({ ok: false, message: networkErrorMessage(e) }) as FormState);
       if (res.ok) {
         toast.success(res.message ?? "Concluído.");
         setOpen(false);
@@ -101,6 +106,7 @@ export function ConfirmAction({
         toast.error(res.message ?? "Não foi possível concluir.");
       }
     });
+  };
 
   return (
     <>
@@ -146,8 +152,9 @@ export function ActionButton({ action, children, ...props }: Omit<ButtonProps, "
       type="button"
       loading={pending}
       onClick={() =>
+        !blockIfOffline() &&
         start(async () => {
-          const res = await action();
+          const res = await action().catch((e) => ({ ok: false, message: networkErrorMessage(e) }) as FormState);
           if (res.ok) {
             if (res.message) toast.success(res.message);
             if (res.redirectTo) router.push(res.redirectTo);

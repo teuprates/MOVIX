@@ -14,8 +14,8 @@ async function login(page, email) {
   await page.waitForURL((u) => !u.pathname.startsWith("/entrar"));
 }
 const results = [];
-const owner = ["/painel", "/painel/contratos", "/painel/frota", "/painel/financeiro", "/painel/multas", "/painel/locatarios", "/painel/manutencao", "/painel/calendario", "/painel/rastreamento"];
-for (const [email, paths] of [["dono@movix.demo", owner], ["locatario@movix.demo", ["/app", "/app/parcelas", "/app/perfil", "/app/ocorrencias"]]]) {
+const owner = ["/painel", "/painel/contratos", "/painel/frota", "/painel/financeiro", "/painel/multas", "/painel/locatarios", "/painel/manutencao", "/painel/calendario", "/painel/rastreamento", "/painel/vistorias", "/painel/ocorrencias", "/painel/frota/novo", "/painel/contratos?status=active&pendente=1"];
+for (const [email, paths] of [["dono@movix.demo", owner], ["locatario@movix.demo", ["/app", "/app/parcelas", "/app/perfil", "/app/ocorrencias", "/app/parcelas?situacao=pagas"]]]) {
   for (const width of [320, 390, 768, 1024, 1280]) {
     const ctx = await browser.newContext({ viewport: { width, height: 800 }, reducedMotion: "reduce" });
     const page = await ctx.newPage();

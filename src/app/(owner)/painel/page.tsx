@@ -223,11 +223,42 @@ export default async function OwnerDashboard() {
       {/* Duas colunas independentes no desktop; no celular os cartões seguem a ordem de prioridade (display: contents + order). */}
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-12 xl:items-start">
         <div className="contents xl:col-span-8 xl:flex xl:min-w-0 xl:flex-col xl:gap-5">
+          {/* Celular: resumo financeiro e operacional compacto (o painel completo fica a partir de md) */}
+          <Link href="/painel/financeiro" className="order-0 md:hidden" aria-label="Resumo do mês — abrir financeiro">
+            <Card className={cn(metricGrid, "min-[340px]:grid-cols-2")}>
+              <div className={metricCell(0)}><Metric label={`Receita · ${cur.month}`} value={brl(cur.receitas)} hint={<Delta value={pct(cur.receitas, prev.receitas)} label={prev.month} />} /></div>
+              <div className={metricCell(1)}><Metric label="Lucro estimado" value={brl(profit)} tone={profit < 0 ? "danger" : undefined} hint={<SimulatedBadge>simulado</SimulatedBadge>} /></div>
+              <div className={metricCell(2)}><Metric label="A receber" value={brl(fin.receivable)} hint={fin.overdueTotal ? <span className="font-medium text-danger">{brl(fin.overdueTotal)} em atraso</span> : "Sem atrasos"} /></div>
+              <div className={metricCell(3)}><Metric label="Ocupação · 30 dias" value={`${occupancy}%`} hint={plural(activeRentals.length, "contrato ativo", "contratos ativos")} /></div>
+            </Card>
+          </Link>
+
+          {/* Celular: ações rápidas */}
+          <nav aria-label="Ações rápidas" className="order-3 md:hidden">
+            <ul className="grid grid-cols-3 gap-2">
+              {[
+                { href: "/painel/contratos/novo", label: "Novo contrato", icon: FileSignature },
+                { href: "/painel/frota/novo", label: "Novo veículo", icon: Car },
+                { href: "/painel/locatarios#convites", label: "Convidar", icon: UserCheck },
+                { href: "/painel/rastreamento", label: "Rastreamento", icon: MapPinned },
+                { href: "/painel/relatorios", label: "Relatórios", icon: ClipboardCheck },
+                { href: "/painel/calendario", label: "Calendário", icon: CalendarClock },
+              ].map((a) => (
+                <li key={a.href}>
+                  <Link href={a.href} className="flex h-full flex-col items-center gap-1.5 rounded-xl border border-border bg-surface px-2 py-3 text-center text-xs font-medium shadow-card transition-colors active:bg-surface-2">
+                    <span className="grid size-9 place-items-center rounded-lg bg-primary-soft text-primary"><a.icon className="size-[1.1rem]" aria-hidden /></span>
+                    {a.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
           {/* Frota agora — assinatura: pulso da frota */}
           <Card className="order-1 xl:order-none">
             <CardHeader title="Frota agora" action={<CardAction href="/painel/frota">Ver frota</CardAction>} />
-            <CardBody className="space-y-6">
-              <div className="grid grid-cols-1 gap-4 min-[360px]:grid-cols-3 sm:gap-5">
+            <CardBody className="space-y-6 max-md:space-y-0">
+              <div className="grid grid-cols-1 gap-4 max-md:hidden min-[360px]:grid-cols-3 sm:gap-5">
                 <Metric label="Veículos ativos" value={vehicles.length} size="lg" hint={plural(activeRentals.length, "contrato ativo", "contratos ativos")} />
                 <Metric label="Ocupação · 30 dias" value={`${occupancy}%`} size="lg" hint="Dias reservados ou alugados" />
                 <Metric label="Em manutenção" value={vehicles.filter((v) => v.status === "maintenance").length} size="lg" hint={maint.length ? plural(maint.length, "agendada", "agendadas") : "Nenhuma agendada"} />
@@ -236,8 +267,8 @@ export default async function OwnerDashboard() {
             </CardBody>
           </Card>
 
-          {/* Financeiro */}
-          <Card className="order-3 xl:order-none">
+          {/* Financeiro (a partir de md; no celular o resumo acima) */}
+          <Card className="order-3 max-md:hidden xl:order-none">
             <CardHeader
               title={<span className="inline-flex items-center gap-2">Financeiro <SimulatedBadge>pagamentos simulados</SimulatedBadge></span>}
               action={<CardAction href="/painel/financeiro">Abrir financeiro</CardAction>}
@@ -255,7 +286,7 @@ export default async function OwnerDashboard() {
           </Card>
 
           {/* Tabela da frota */}
-          <Card className="order-5 min-w-0 xl:order-none">
+          <Card className="order-5 min-w-0 max-md:hidden xl:order-none">
             <CardHeader title="Veículos" description="Status, saúde estimada, locatário atual e ocupação nos últimos 30 dias" action={<CardAction href="/painel/frota/novo">Cadastrar veículo</CardAction>} />
             <DataTable
               searchPlaceholder="Buscar modelo, placa ou locatário"
@@ -330,7 +361,7 @@ export default async function OwnerDashboard() {
           </Card>
 
           {/* Rastreamento simulado */}
-          <Card className="order-6 overflow-hidden xl:order-none">
+          <Card className="order-6 overflow-hidden max-md:hidden xl:order-none">
             <Link href="/painel/rastreamento" className="group flex items-center gap-4 p-5 transition-colors hover:bg-surface-2/60">
               <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-rail text-rail-accent"><MapPinned className="size-5" aria-hidden /></span>
               <span className="min-w-0 flex-1">

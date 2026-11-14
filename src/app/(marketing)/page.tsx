@@ -5,6 +5,7 @@ import {
 import { Hero } from "@/features/landing/hero";
 import { PillarsStory } from "@/features/landing/story";
 import { GlowCard, Reveal } from "@/features/landing/reveal";
+import { InstallAppSection } from "@/features/landing/install-app";
 import { DEMO_ALERTS, DEMO_MONTHS, DEMO_VEHICLES } from "@/lib/demo/public-data";
 import { buttonClass } from "@/components/ui/primitives";
 
@@ -96,6 +97,8 @@ export default function LandingPage() {
           </Reveal>
         </div>
       </section>
+
+      <InstallAppSection />
 
       <section id="seguranca" className="mx-auto max-w-7xl px-4 py-24 sm:px-6">
         <Reveal className="max-w-2xl">

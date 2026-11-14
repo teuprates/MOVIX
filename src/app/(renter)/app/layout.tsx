@@ -17,8 +17,8 @@ export default async function RenterLayout({ children }: LayoutProps<"/app">) {
   const orgs = ctx.approved.map((m) => ({ id: m.organization_id, name: m.organization.name }));
 
   return (
-    <div className="min-h-dvh bg-bg pb-24 md:pb-10" style={{ "--brand": org?.primary_color ?? "var(--primary)" } as CSSProperties}>
-      <header className="glass sticky top-0 z-30 border-b border-border">
+    <div className="min-h-dvh bg-bg px-safe pb-[calc(5rem+var(--safe-bottom))] md:pb-[calc(2.5rem+var(--safe-bottom))]" style={{ "--brand": org?.primary_color ?? "var(--primary)" } as CSSProperties}>
+      <header className="glass sticky top-0 z-30 border-b border-border pt-safe">
         <div className="mx-auto flex h-14 max-w-5xl items-center gap-3 px-4 sm:px-6">
           <Link href="/app" className="shrink-0" aria-label={org ? `${org.name} — início` : "MOVIX — início"}>
             {org ? (

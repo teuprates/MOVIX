@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import {
   AlertTriangle, BarChart3, Bell, CalendarDays, Car, ClipboardCheck, FileSignature, FileText, Gauge, LayoutDashboard,
   Map, Menu, Presentation, Receipt, Settings, Users, Wrench, X, type LucideIcon,
@@ -80,6 +81,11 @@ export function MobileDrawer({ children, label = "Abrir menu" }: { children: Rea
     setOpen(false);
   }, [pathname]);
   useEffect(() => {
+    const onOpen = () => setOpen(true);
+    window.addEventListener("movix:open-menu", onOpen);
+    return () => window.removeEventListener("movix:open-menu", onOpen);
+  }, []);
+  useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
@@ -94,16 +100,17 @@ export function MobileDrawer({ children, label = "Abrir menu" }: { children: Rea
       <button type="button" onClick={() => setOpen(true)} className="grid size-9 place-items-center rounded-lg text-muted transition-colors hover:bg-surface-2 hover:text-fg lg:hidden" aria-label={label} aria-expanded={open}>
         <Menu className="size-5" />
       </button>
-      {open && (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+      {open && createPortal(
+        <div className="fixed inset-0 z-[70] lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
           <div className="absolute inset-0 bg-[#02040a]/70 backdrop-blur-[2px]" onClick={() => setOpen(false)} />
-          <div className="animate-pop absolute inset-y-0 left-0 flex w-[min(86vw,17.5rem)] flex-col overflow-y-auto bg-rail p-3 text-rail-fg shadow-pop">
-            <button type="button" onClick={() => setOpen(false)} className="absolute right-3 top-3.5 grid size-8 place-items-center rounded-lg text-rail-muted hover:bg-rail-2 hover:text-rail-fg" aria-label="Fechar menu">
+          <div className="animate-pop absolute inset-y-0 left-0 flex w-[min(86vw,17.5rem)] flex-col overflow-y-auto bg-rail p-3 pb-safe-3 pl-[calc(var(--safe-left)+0.75rem)] pt-safe-3 text-rail-fg shadow-pop">
+            <button type="button" onClick={() => setOpen(false)} className="absolute right-3 top-safe-3.5 grid size-8 place-items-center rounded-lg text-rail-muted hover:bg-rail-2 hover:text-rail-fg" aria-label="Fechar menu">
               <X className="size-5" />
             </button>
             {children}
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );

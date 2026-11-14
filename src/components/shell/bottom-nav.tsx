@@ -41,7 +41,7 @@ export function RenterNav({ variant }: { variant: "bottom" | "top" }) {
     );
   }
   return (
-    <nav aria-label="Navegação do app" className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden">
+    <nav aria-label="Navegação do app" className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 px-safe pb-safe backdrop-blur-md md:hidden">
       <ul className="mx-auto grid max-w-md grid-cols-5 px-1">
         {ITEMS.map((i) => {
           const on = isOn(pathname, i.href, i.exact);

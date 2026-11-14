@@ -6,6 +6,7 @@ import { Copy, CreditCard, QrCode, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/dialog";
 import { Button, Callout, SimulatedBadge } from "@/components/ui/primitives";
+import { blockIfOffline, networkErrorMessage } from "@/lib/offline";
 import { brl, date } from "@/lib/format";
 import { simulatePayment } from "./actions";
 
@@ -27,8 +28,9 @@ export function PayInstallmentButton({ installment, path, size = "sm" }: { insta
   }, [open, method, code]);
 
   const confirm = () =>
+    !blockIfOffline() &&
     start(async () => {
-      const res = await simulatePayment(installment.id, method, path);
+      const res = await simulatePayment(installment.id, method, path).catch((e) => ({ ok: false, message: networkErrorMessage(e) }));
       if (res.ok) {
         toast.success(res.message);
         setOpen(false);

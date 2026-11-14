@@ -50,6 +50,33 @@ Atualizado em: 13/11/2026
   `scripts/verificar-responsivo.mjs` sem rolagem horizontal em 13 páginas × 320/390/768/1024/1280px, Ctrl K/Esc/Tab com foco
   visível. Capturas antes/depois em `docs/capturas/antes` e `docs/capturas/depois` (`scripts/capturas.mjs`).
 
+## Experiência PWA (13/11/2026)
+Auditoria e prioridades em `docs/pwa-auditoria.md` (14 problemas, P0–P2). Implementado:
+- **Navegação mobile:** barra inferior do proprietário (4 áreas + Menu com indicador de pendências), drawer em portal com
+  áreas seguras, bottom sheets para todos os modais, campos 16 px e alvos de toque maiores no celular.
+- **Filtros contextuais no servidor (URL + persistência):** frota (status múltiplo, marca, ano, diária, km, documentação
+  vencendo, manutenção pendente, 7 ordenações), contratos (status, modalidade, veículo, locatário, período, devolução em
+  7 dias, pagamento pendente, ordenação, "carregar mais"), financeiro (atalhos 7/30/90 dias e mês, período, tipo de
+  lançamento, categoria, veículo, faixa de valor, ordenação), manutenção (situação incl. vencidas/próximas derivadas do
+  prazo, tipo, veículo, prazo), locatários (nome/e-mail, status, contrato ativo, pagamento pendente, cadastro), vistorias,
+  ocorrências e multas (status, tipo, veículo, locatário, período), locatário (pagamentos em aberto/vencidos/pagos, contrato,
+  vencimento; ocorrências em aberto/encerradas). Contagem de resultados, chips removíveis, "Limpar filtros", estados vazios
+  específicos.
+- **Tabelas → cartões** abaixo de `md` (com ações e "Ordenar"); financeiro com tabela única de movimentações.
+- **Dashboards:** proprietário no celular com resumo 2×2, pulso da frota, pendências, ações rápidas e vencimentos (gráfico e
+  tabela completos a partir de `md`); locatário com carrossel/abas quando há mais de um veículo ativo.
+- **Formulário de veículo em 4 etapas** no celular; **bloqueio offline** de ações remotas; **banner de conexão**.
+- **PWA:** manifest com `id`, atalhos com ícone, orientação livre; SW versionado com aviso de atualização, página offline
+  estilizada e "Tentar novamente" que recarrega a URL pedida.
+
+Verificação (local, build de produção + Supabase real): lint/typecheck OK; Vitest 50/50; Playwright **65 passaram, 3 pulados**
+(só-mobile no projeto desktop) — inclui novos testes de manifest/ícones, SW, navegação offline com página estilizada, barra
+inferior/menu, filtros combinados + persistência + limpeza + estado vazio, contratos com pendência × modalidade conferidos
+contra a API, formulário em etapas e alternância entre dois veículos ativos (cenário criado e desfeito no teste).
+`scripts/verificar-responsivo.mjs`: sem rolagem horizontal em 18 páginas × 320/390/768/1024/1280 px. Capturas em
+`docs/capturas/pwa`. Limitações: instalação real em iOS/Android e splash do iOS não são testáveis no Playwright (verificar
+em aparelho); teclado virtual não é emulado (campos 16 px e barra de ações fixa acima da navegação).
+
 ## Implementado, ainda sem validação automatizada
 Uploads de storage, e-mails de verificação, assistente com IA (sem `ANTHROPIC_API_KEY`, usa o roteiro).
 

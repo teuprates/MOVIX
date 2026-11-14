@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { EXPENSE_CATEGORY } from "@/lib/labels";
 import { todayIso } from "@/lib/format";
 
-export type FinanceFilter = { from: string; to: string; vehicleId?: string | null };
+export type FinanceFilter = { from: string; to: string; vehicleId?: string | null; categories?: string[]; min?: number | null; max?: number | null };
 
 const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 
@@ -14,13 +14,29 @@ export function defaultPeriod() {
   return { from: d.toISOString().slice(0, 10), to };
 }
 
+const PRESET_DAYS: Record<string, number> = { "7d": 6, "30d": 29, "90d": 89 };
+
+/** Período, veículo, categorias e faixa de valor a partir da URL. Atalho `periodo` (7d, 30d, mes, 90d) tem prioridade. */
 export function parsePeriod(sp: Record<string, string | string[] | undefined>): FinanceFilter {
-  const def = defaultPeriod();
+  let def = defaultPeriod();
+  const preset = typeof sp.periodo === "string" ? sp.periodo : "";
+  if (preset === "mes") def = { from: `${todayIso().slice(0, 7)}-01`, to: todayIso() };
+  else if (PRESET_DAYS[preset] !== undefined) {
+    const d = new Date(`${todayIso()}T00:00:00Z`);
+    d.setUTCDate(d.getUTCDate() - PRESET_DAYS[preset]);
+    def = { from: d.toISOString().slice(0, 10), to: todayIso() };
+  }
+  const numOf = (v: unknown) => (typeof v === "string" && v !== "" && Number.isFinite(Number(v)) ? Number(v) : null);
+  const cats = typeof sp.categoria === "string" ? sp.categoria.split(",").filter((c) => c in EXPENSE_CATEGORY) : [];
+  if (preset) return { ...def, vehicleId: typeof sp.veiculo === "string" && /^[0-9a-f-]{36}$/.test(sp.veiculo) ? sp.veiculo : null, categories: cats, min: numOf(sp.valor_min), max: numOf(sp.valor_max) };
   const ok = (v: unknown) => typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v);
   return {
     from: ok(sp.de) ? (sp.de as string) : def.from,
     to: ok(sp.ate) ? (sp.ate as string) : def.to,
     vehicleId: typeof sp.veiculo === "string" && /^[0-9a-f-]{36}$/.test(sp.veiculo) ? sp.veiculo : null,
+    categories: cats,
+    min: numOf(sp.valor_min),
+    max: numOf(sp.valor_max),
   };
 }
 
@@ -34,6 +50,8 @@ export async function loadFinance(supabase: SupabaseClient, orgId: string, f: Fi
     .gte("paid_at", `${f.from}T00:00:00-03:00`)
     .lte("paid_at", `${f.to}T23:59:59-03:00`);
   if (f.vehicleId) pay = pay.eq("rental.vehicle_id", f.vehicleId);
+  if (f.min != null) pay = pay.gte("amount", f.min);
+  if (f.max != null) pay = pay.lte("amount", f.max);
   let exp = supabase
     .from("expenses")
     .select("id, category, amount, spent_at, description, vehicle_id, maintenance_id, fine_id, vehicle:vehicles(brand, model, plate)")
@@ -42,6 +60,9 @@ export async function loadFinance(supabase: SupabaseClient, orgId: string, f: Fi
     .lte("spent_at", f.to)
     .order("spent_at", { ascending: false });
   if (f.vehicleId) exp = exp.eq("vehicle_id", f.vehicleId);
+  if (f.categories?.length) exp = exp.in("category", f.categories);
+  if (f.min != null) exp = exp.gte("amount", f.min);
+  if (f.max != null) exp = exp.lte("amount", f.max);
   let pend = supabase
     .from("installments")
     .select("id, number, amount, due_date, rental:rentals!inner(id, code, status, vehicle_id, renter:profiles!rentals_renter_id_fkey(full_name))")
@@ -50,6 +71,8 @@ export async function loadFinance(supabase: SupabaseClient, orgId: string, f: Fi
     .in("rental.status", ["active", "completed"])
     .order("due_date");
   if (f.vehicleId) pend = pend.eq("rental.vehicle_id", f.vehicleId);
+  if (f.min != null) pend = pend.gte("amount", f.min);
+  if (f.max != null) pend = pend.lte("amount", f.max);
 
   const [payments, expenses, pending, vehicles] = await Promise.all([
     pay,

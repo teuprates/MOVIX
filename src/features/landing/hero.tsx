@@ -32,7 +32,7 @@ export function Hero() {
         mx.set((e.clientX - r.left) / r.width);
         my.set((e.clientY - r.top) / r.height);
       }}
-      className="relative isolate flex min-h-[100svh] items-center overflow-hidden pt-24"
+      className="relative isolate flex min-h-[100svh] items-center overflow-hidden pt-safe-24"
     >
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{ background: glow }} />
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-20">

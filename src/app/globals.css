@@ -147,9 +147,49 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/*
+ * Safe areas (iPhone com notch/Dynamic Island, barra de gestos, paisagem).
+ * Com viewport-fit=cover + status bar "black-translucent", o PWA instalado no iOS desenha atrás da barra de
+ * status; os insets dizem quanto reservar. Em Android/desktop eles valem 0, então as classes abaixo não mudam nada.
+ *   pt-safe            → só o inset
+ *   pt-safe-3          → inset + 0.75rem (respiro além da barra do sistema)
+ *   top-safe-3         → idem para elementos posicionados
+ *   px-safe            → insets laterais (paisagem), somados ao padding próprio do conteúdo interno
+ */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+@utility pt-safe {
+  padding-top: var(--safe-top);
+}
+@utility pt-safe-* {
+  padding-top: calc(var(--safe-top) + --spacing(--value(number)));
+}
+@utility pb-safe {
+  padding-bottom: var(--safe-bottom);
+}
+@utility pb-safe-* {
+  padding-bottom: calc(var(--safe-bottom) + --spacing(--value(number)));
+}
+@utility px-safe {
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+@utility pl-safe {
+  padding-left: var(--safe-left);
+}
+@utility top-safe-* {
+  top: calc(var(--safe-top) + --spacing(--value(number)));
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* âncoras (#recursos, #app…) param abaixo do header fixo + barra de status */
+  scroll-padding-top: calc(var(--safe-top) + 4.5rem);
 }
 
 body {

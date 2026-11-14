@@ -73,7 +73,7 @@ export function ServiceWorkerRegister() {
 
   if (online) return null;
   return (
-    <div role="status" className="fixed inset-x-0 top-0 z-[60] flex items-center justify-center gap-2 bg-warning px-4 pb-1.5 pt-[max(0.375rem,env(safe-area-inset-top))] text-center text-xs font-medium text-[#1a1100]">
+    <div role="status" className="fixed inset-x-0 top-0 z-[60] flex items-center justify-center gap-2 bg-warning pb-1.5 pt-safe-1.5 pl-[calc(var(--safe-left)+1rem)] pr-[calc(var(--safe-right)+1rem)] text-center text-xs font-medium text-[#1a1100]">
       <WifiOff className="size-3.5 shrink-0" aria-hidden />
       Sem conexão — você vê a última tela carregada. Ações que dependem do servidor não serão enviadas.
     </div>

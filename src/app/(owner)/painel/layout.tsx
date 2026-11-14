@@ -89,10 +89,10 @@ export default async function OwnerLayout({ children }: LayoutProps<"/painel">) 
   );
 
   return (
-    <div className="min-h-dvh bg-bg pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0" style={{ "--brand": org.primary_color } as CSSProperties}>
+    <div className="min-h-dvh bg-bg px-safe pb-[calc(4.5rem+var(--safe-bottom))] lg:pb-0" style={{ "--brand": org.primary_color } as CSSProperties}>
       <aside aria-label="Menu lateral" className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-rail-border bg-rail p-3 text-rail-fg lg:block">{sidebar()}</aside>
       <div className="lg:pl-64">
-        <header className="glass sticky top-0 z-30 border-b border-border pt-[env(safe-area-inset-top)]">
+        <header className="glass sticky top-0 z-30 border-b border-border pt-safe">
           <div className="mx-auto flex h-14 max-w-[90rem] items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8">
             <MobileDrawer>{sidebar()}</MobileDrawer>
             <div className="min-w-0 flex-1"><CommandMenu items={commands} /></div>

@@ -24,8 +24,8 @@ export default async function AdminPage() {
   const maxGrowth = Math.max(1, ...(metrics?.growth ?? []).map((g) => g.accounts));
 
   return (
-    <div className="min-h-dvh bg-bg">
-      <header className="flex items-center justify-between border-b border-border bg-surface px-4 py-3 sm:px-8">
+    <div className="min-h-dvh bg-bg px-safe">
+      <header className="flex items-center justify-between border-b border-border bg-surface px-4 pb-3 pt-safe-3 sm:px-8">
         <Link href="/admin" className="flex items-center gap-3"><MovixLogo /><Badge tone="primary">Admin</Badge></Link>
         <div className="flex items-center gap-2"><ThemeToggle /><form action={signOut}><button className="text-sm text-muted hover:text-fg">Sair</button></form></div>
       </header>

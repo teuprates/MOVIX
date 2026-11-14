@@ -39,8 +39,8 @@ export default async function DemoPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-bg">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-4 py-3 sm:px-8">
+    <div className="min-h-dvh bg-bg px-safe">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-4 pb-3 pt-safe-3 sm:px-8">
         <Link href="/painel" className="flex items-center gap-3"><MovixLogo /><SimulatedBadge>Modo apresentação</SimulatedBadge></Link>
         <ThemeToggle />
       </header>

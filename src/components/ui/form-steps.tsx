@@ -62,7 +62,7 @@ export function FormSteps({ steps, submit, children }: { steps: string[]; submit
           {s}
         </div>
       ))}
-      <div className="sticky bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-10 -mx-4 flex gap-2 border-t border-border bg-bg/95 px-4 py-3 backdrop-blur lg:hidden">
+      <div className="sticky bottom-[calc(4.75rem+var(--safe-bottom))] z-10 -mx-4 flex gap-2 border-t border-border bg-bg/95 px-4 py-3 backdrop-blur lg:hidden">
         {step > 0 && (
           <Button type="button" variant="secondary" onClick={() => go(step - 1)} className="flex-1">
             <ChevronLeft className="size-4" aria-hidden /> Voltar

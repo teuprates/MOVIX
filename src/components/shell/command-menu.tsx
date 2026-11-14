@@ -73,7 +73,7 @@ export function CommandMenu({ items, placeholder = "Buscar páginas, veículos e
       <dialog
         ref={ref}
         aria-label="Busca rápida"
-        className="m-auto mt-[12vh] w-[min(92vw,36rem)] overflow-hidden rounded-xl border border-border bg-surface p-0 text-fg shadow-pop backdrop:bg-[#02040a]/55 backdrop:backdrop-blur-[2px] open:animate-pop"
+        className="m-auto mt-[max(12vh,calc(var(--safe-top)+1rem))] w-[min(92vw,36rem)] overflow-hidden rounded-xl border border-border bg-surface p-0 text-fg shadow-pop backdrop:bg-[#02040a]/55 backdrop:backdrop-blur-[2px] open:animate-pop"
         onClick={(e) => e.target === ref.current && close()}
       >
         <div className="flex items-center gap-2.5 border-b border-border px-4">

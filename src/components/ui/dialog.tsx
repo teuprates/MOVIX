@@ -33,12 +33,12 @@ export function Modal({ open, onClose, title, description, children, className }
       className={cn(
         // Celular: bottom sheet ancorado embaixo (alcance do polegar, respeita a barra de gestos). sm+: modal central.
         "m-auto w-[min(92vw,34rem)] rounded-2xl border border-border bg-surface p-0 text-fg shadow-pop backdrop:bg-[#02040a]/60 backdrop:backdrop-blur-[2px] open:animate-pop",
-        "max-sm:mb-0 max-sm:max-h-[92dvh] max-sm:w-full max-sm:max-w-full max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0 max-sm:open:animate-[sheet-up_220ms_var(--ease-out)_both]",
+        "max-sm:mb-0 max-sm:max-h-[calc(100dvh-var(--safe-top)-0.75rem)] max-sm:w-full max-sm:max-w-full max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0 max-sm:open:animate-[sheet-up_220ms_var(--ease-out)_both]",
         className,
       )}
     >
       {open && (
-        <div className="p-5 max-sm:pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+        <div className="p-5 max-sm:pb-safe-5">
           <div aria-hidden className="-mt-2 mb-3 flex justify-center sm:hidden"><span className="h-1 w-10 rounded-full bg-border-strong" /></div>
           <div className="mb-4 flex items-start justify-between gap-3">
             <div>

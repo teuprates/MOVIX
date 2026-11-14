@@ -5,9 +5,9 @@ import { ThemeToggle } from "@/components/theme";
 
 export default function AuthLayout({ children }: LayoutProps<"/">) {
   return (
-    <div className="min-h-dvh bg-bg text-fg">
+    <div className="min-h-dvh bg-bg px-safe text-fg">
       <div className="grid min-h-dvh lg:grid-cols-[1.05fr_1fr]">
-        <aside className="dark relative hidden overflow-hidden border-r border-border bg-[#05070d] text-fg lg:flex lg:flex-col lg:justify-between lg:p-12">
+        <aside className="dark relative hidden overflow-hidden border-r border-border bg-[#05070d] text-fg lg:flex lg:flex-col lg:justify-between lg:p-12 lg:pt-safe-12">
           <div aria-hidden className="pointer-events-none absolute inset-0">
             <div className="absolute -left-32 top-1/4 size-[520px] rounded-full bg-electric/25 blur-[120px]" />
             <div className="absolute -bottom-40 right-0 size-[420px] rounded-full bg-cyan/15 blur-[120px]" />
@@ -29,7 +29,7 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
           </div>
           <p className="relative text-xs text-subtle">© {new Date().getFullYear()} MOVIX · Projeto acadêmico (TCC)</p>
         </aside>
-        <main id="conteudo" className="flex flex-col px-4 py-8 sm:px-8">
+        <main id="conteudo" className="flex flex-col px-4 pb-safe-8 pt-safe-8 sm:px-8">
           <Link href="/" className="mb-8 w-fit lg:hidden">
             <MovixLogo />
           </Link>

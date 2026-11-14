@@ -44,7 +44,7 @@ export function PublicDemo() {
   }));
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-20 pt-24 sm:px-6">
+    <div className="mx-auto max-w-7xl px-4 pb-20 pt-safe-24 sm:px-6">
       <div role="status" className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashed border-warning/50 bg-warning/10 px-4 py-3 text-sm">
         <span className="flex items-center gap-2"><AlertTriangle className="size-4 text-warning" /><strong>Demonstração pública</strong> — dados fictícios, nada é salvo e nenhum dado real é acessado.</span>
         <div className="flex gap-2">

@@ -3,6 +3,7 @@ import { Lock } from "lucide-react";
 import { ActionForm, MaskedField, SelectField, SubmitButton, TextAreaField, TextField } from "@/components/ui/form";
 import { FileField } from "@/components/ui/file-field";
 import { Callout } from "@/components/ui/primitives";
+import { FormSteps } from "@/components/ui/form-steps";
 import type { FormState } from "@/lib/form-state";
 import { FUEL, TRANSMISSION, VEHICLE_STATUS } from "@/lib/labels";
 
@@ -21,7 +22,11 @@ function Section({ title, description, children }: { title: string; description?
 export function VehicleForm({ action, defaults = {}, isEdit }: { action: (s: FormState, fd: FormData) => Promise<FormState>; defaults?: Defaults; isEdit?: boolean }) {
   const d = (k: string) => (defaults[k] ?? "") as string;
   return (
-    <ActionForm action={action} className="space-y-5">
+    <ActionForm action={action}>
+      <FormSteps
+        steps={["Identificação", "Tarifas", "Documentos", "Fotos e observações"]}
+        submit={<SubmitButton size="lg">{isEdit ? "Salvar alterações" : "Cadastrar veículo"}</SubmitButton>}
+      >
       <Section title="Identificação">
         <TextField label="Marca" name="brand" defaultValue={d("brand")} required placeholder="Ex.: Fiat" />
         <TextField label="Modelo" name="model" defaultValue={d("model")} required placeholder="Ex.: Argo" />
@@ -60,10 +65,7 @@ export function VehicleForm({ action, defaults = {}, isEdit }: { action: (s: For
         <TextAreaField label="Observações" name="notes" defaultValue={d("notes")} maxLength={2000} />
         {!isEdit && <FileField name="photos" label="Fotos" multiple accept="image/jpeg,image/png,image/webp" hint="Até 10 imagens JPG/PNG/WEBP, 5 MB cada" />}
       </section>
-
-      <div className="flex justify-end">
-        <SubmitButton size="lg">{isEdit ? "Salvar alterações" : "Cadastrar veículo"}</SubmitButton>
-      </div>
+      </FormSteps>
     </ActionForm>
   );
 }

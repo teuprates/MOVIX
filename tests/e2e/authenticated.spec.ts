@@ -78,7 +78,7 @@ test("locatário: duas locadoras, troca sem vazamento e aceite + pagamento simul
     await expect(page.getByText(/aceito eletronicamente/).first()).toBeVisible();
   }
   await page.goto("/app/parcelas");
-  const pay = page.getByRole("button", { name: "Pagar" }).first();
+  const pay = page.getByRole("button", { name: "Pagar", exact: true }).first();
   if (await pay.isVisible()) {
     await pay.click();
     await expect(page.getByText("Ambiente de demonstração")).toBeVisible();
@@ -139,4 +139,89 @@ test("mobile: app do locatário com navegação inferior", async ({ page, isMobi
   test.skip(!isMobile, "apenas no projeto mobile");
   await login(page, USERS.renter);
   await expect(page.getByRole("navigation", { name: "Navegação do app" }).last()).toBeVisible();
+});
+
+test("mobile: proprietário tem navegação inferior e o menu completo abre pela aba Menu", async ({ page, isMobile }) => {
+  test.skip(!isMobile, "apenas no projeto mobile");
+  await login(page, USERS.ownerA);
+  const tabs = page.getByRole("navigation", { name: "Navegação rápida" });
+  await expect(tabs).toBeVisible();
+  await tabs.getByRole("link", { name: "Frota" }).click();
+  await expect(page).toHaveURL(/\/painel\/frota/);
+  await tabs.getByRole("button", { name: /Menu completo/ }).click();
+  await expect(page.getByRole("dialog", { name: "Menu" }).getByRole("link", { name: "Manutenção" })).toBeVisible();
+});
+
+test("filtros da frota: chip + busca no servidor, persistência ao voltar e limpar", async ({ page }) => {
+  await login(page, USERS.ownerA);
+  await page.goto("/painel/frota");
+  await page.getByRole("button", { name: "Alugado", exact: true }).click();
+  await expect(page).toHaveURL(/status=rented/);
+  await expect(page.getByText("2 veículos")).toBeVisible();
+  await page.getByPlaceholder("Placa, marca, modelo ou versão").fill("argo");
+  await expect(page).toHaveURL(/q=argo/);
+  await expect(page.getByText("1 veículo", { exact: true })).toBeVisible();
+  await page.goto("/painel/contratos");
+  await page.goto("/painel/frota");
+  await expect(page).toHaveURL(/status=rented.*q=argo|q=argo.*status=rented/);
+  await page.getByRole("button", { name: "Limpar filtros" }).click();
+  await expect(page).not.toHaveURL(/q=|status=/);
+  await expect(page.getByText("5 veículos")).toBeVisible();
+  // Combinação sem resultado → estado vazio específico
+  await page.goto("/painel/frota?preco_min=99999");
+  await expect(page.getByText("Nenhum veículo com esses filtros")).toBeVisible();
+});
+
+test("filtros de contratos: pagamento pendente e modalidade combinados (dados reais)", async ({ page }) => {
+  const owner = await api(USERS.ownerA);
+  const { data: pend } = await owner.from("installments").select("rental_id").eq("status", "pending");
+  const ids = [...new Set((pend ?? []).map((p) => p.rental_id))];
+  const { count } = await owner.from("rentals").select("id", { count: "exact", head: true }).eq("modality", "daily").in("id", ids);
+  await login(page, USERS.ownerA);
+  await page.goto("/painel/contratos?pendente=1&modalidade=daily");
+  await expect(page.getByText(new RegExp(`^${count} contratos?$`))).toBeVisible();
+  await page.goto("/painel/contratos?q=NAO-EXISTE-XYZ");
+  await expect(page.getByText(/Nenhum contrato corresponde aos filtros/).filter({ visible: true })).toBeVisible();
+});
+
+test("formulário de veículo em etapas no celular valida antes de avançar", async ({ page, isMobile }) => {
+  test.skip(!isMobile, "apenas no projeto mobile");
+  await login(page, USERS.ownerA);
+  await page.goto("/painel/frota/novo");
+  await expect(page.getByText("Etapa 1 de 4")).toBeVisible();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await expect(page.getByText("Etapa 1 de 4")).toBeVisible(); // campos obrigatórios vazios
+  await page.getByLabel("Marca").fill("Teste");
+  await page.getByLabel("Modelo").fill("E2E");
+  await page.getByLabel("Ano").fill("2024");
+  await page.getByLabel("Placa").fill("TST1E23");
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await expect(page.getByText("Etapa 2 de 4")).toBeVisible();
+  await expect(page.getByLabel("Diária (R$)")).toBeVisible();
+});
+
+test("locatário com dois veículos ativos alterna entre eles", async ({ page }) => {
+  const owner = await api(USERS.ownerA);
+  const renter = await api(USERS.renter);
+  const { data: v } = await owner.from("vehicles").select("id").eq("plate", "HZN5E67").single();
+  const { data: me } = await renter.auth.getUser();
+  const start = new Date(Date.now() + 300 * 86_400_000).toISOString().slice(0, 10);
+  const end = new Date(Date.now() + 303 * 86_400_000).toISOString().slice(0, 10);
+  const created = await owner.rpc("create_rental", { p_vehicle: v!.id, p_renter: me.user!.id, p_start: start, p_end: end, p_modality: "daily", p_unit_price: 100, p_installments: 1, p_clauses: "Cláusula de teste E2E — dois veículos ativos (dados fictícios)." });
+  expect(created.error).toBeNull();
+  const rentalId = created.data as string;
+  try {
+    const { data: r } = await renter.from("rentals").select("current_version_id").eq("id", rentalId).single();
+    const acc = await renter.rpc("accept_contract", { p_version: r!.current_version_id, p_user_agent: "playwright", p_ip: null });
+    expect(acc.error).toBeNull();
+    const { count: activeCount } = await renter.from("rentals").select("id", { count: "exact", head: true }).eq("renter_id", me.user!.id).eq("status", "active").eq("organization_id", (await renter.from("rentals").select("organization_id").eq("id", rentalId).single()).data!.organization_id);
+    expect(activeCount).toBeGreaterThanOrEqual(2);
+    await login(page, USERS.renter);
+    const tabs = page.getByRole("tablist", { name: "Seus veículos alugados" });
+    await expect(tabs.getByRole("tab")).toHaveCount(activeCount!);
+    await tabs.getByRole("tab", { name: /Polo/ }).click();
+    await expect(tabs.getByRole("tab", { name: /Polo/ })).toHaveAttribute("aria-selected", "true");
+  } finally {
+    await owner.rpc("cancel_rental", { p_rental: rentalId, p_reason: "limpeza do teste E2E" });
+  }
 });

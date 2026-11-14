@@ -1,23 +1,46 @@
 import Link from "next/link";
 import { ArrowDownRight, ArrowUpRight, Clock, Wallet } from "lucide-react";
 import { requireOwner } from "@/lib/auth/context";
-import { brl, date, dateTime, plural } from "@/lib/format";
+import { brl, date, plural, todayIso } from "@/lib/format";
 import { EXPENSE_CATEGORY, PAYMENT_METHOD } from "@/lib/labels";
+import { PERIOD_PRESETS, filters } from "@/lib/filters";
 import { loadFinance, parsePeriod } from "@/features/finance/queries";
 import { ExpenseFormButton } from "@/features/operations/forms";
 import { deleteExpense } from "@/features/operations/actions";
 import { CategoryBars, RevenueExpenseChart } from "@/components/charts";
-import { PeriodFilter } from "@/components/period-filter";
+import { FilterBar } from "@/components/filters/filter-bar";
 import { ConfirmAction } from "@/components/ui/dialog";
-import { Card, CardBody, CardHeader, PageHeader, SimulatedBadge, MetricStrip, Table, Td, Th } from "@/components/ui/primitives";
+import { DataTable } from "@/components/ui/data-table";
+import { Badge, Card, CardBody, CardHeader, MetricStrip, PageHeader, SimulatedBadge, buttonClass } from "@/components/ui/primitives";
 
 export const metadata = { title: "Financeiro" };
 
+const KINDS = { receita: "Recebidas", a_receber: "A receber", vencida: "Vencidas", despesa: "Despesas" } as const;
+type Kind = keyof typeof KINDS;
+const SORTS = { data_desc: "Mais recentes", data: "Mais antigas", valor_desc: "Maior valor", valor: "Menor valor" } as const;
+
 export default async function FinancePage({ searchParams }: PageProps<"/painel/financeiro">) {
-  const f = parsePeriod(await searchParams);
+  const sp = await searchParams;
+  const f = parsePeriod(sp);
+  const fl = filters(sp);
+  const kinds = fl.list("tipo", Object.keys(KINDS) as Kind[]);
+  const sort = fl.oneOf("ordem", Object.keys(SORTS) as (keyof typeof SORTS)[]) || "data_desc";
+  const show = (k: Kind) => kinds.length === 0 || kinds.includes(k);
   const { supabase, orgId } = await requireOwner();
   const fin = await loadFinance(supabase, orgId, f);
+  const today = todayIso();
   const qs = new URLSearchParams({ de: f.from, ate: f.to, ...(f.vehicleId ? { veiculo: f.vehicleId } : {}) }).toString();
+
+  type Mov = { id: string; kind: Kind; date: string; amount: number; title: string; detail: string; href?: string; deletable?: string };
+  const movements: Mov[] = [
+    ...(show("receita") ? fin.payments.map((p) => ({ id: `p-${p.id}`, kind: "receita" as const, date: p.paid_at.slice(0, 10), amount: Number(p.amount), title: `${p.rental.code} · parcela ${p.number}`, detail: `${p.rental.renter?.full_name ?? ""} · ${PAYMENT_METHOD[p.payment_method as keyof typeof PAYMENT_METHOD] ?? ""}`, href: `/painel/contratos/${p.rental.id}` })) : []),
+    ...fin.pending
+      .filter((p) => (p.due_date < today ? show("vencida") : show("a_receber")))
+      .map((p) => ({ id: `r-${p.id}`, kind: (p.due_date < today ? "vencida" : "a_receber") as Kind, date: p.due_date, amount: Number(p.amount), title: `${p.rental.code} · parcela ${p.number}`, detail: p.rental.renter?.full_name ?? "", href: `/painel/contratos/${p.rental.id}` })),
+    ...(show("despesa") ? fin.expenses.map((e) => ({ id: `e-${e.id}`, kind: "despesa" as const, date: e.spent_at, amount: Number(e.amount), title: EXPENSE_CATEGORY[e.category], detail: `${e.description ?? "—"} · ${e.vehicle ? `${e.vehicle.brand} ${e.vehicle.model}` : "Geral"}`, deletable: !e.maintenance_id && !e.fine_id ? e.id : undefined })) : []),
+  ].sort((a, b) => (sort.startsWith("valor") ? a.amount - b.amount : a.date.localeCompare(b.date)) * (sort.endsWith("_desc") ? -1 : 1));
+  const TONE = { receita: "success", a_receber: "warning", vencida: "danger", despesa: "neutral" } as const;
+  const SIGN = { receita: "+", a_receber: "", vencida: "", despesa: "−" } as const;
 
   return (
     <>
@@ -26,12 +49,24 @@ export default async function FinancePage({ searchParams }: PageProps<"/painel/f
         description={<>Receitas de parcelas pagas <SimulatedBadge className="mx-1">pagamentos simulados</SimulatedBadge> e despesas categorizadas.</>}
         actions={
           <>
-            <Link href={`/painel/relatorios?${qs}`} className="text-sm text-primary hover:underline">Exportar relatório</Link>
+            <Link href={`/painel/relatorios?${qs}`} className={buttonClass("secondary")}>Exportar relatório</Link>
             <ExpenseFormButton vehicles={fin.vehicles.map((v) => ({ id: v.id, label: `${v.brand} ${v.model} · ${v.plate}` }))} />
           </>
         }
       />
-      <PeriodFilter from={f.from} to={f.to} vehicleId={f.vehicleId} vehicles={fin.vehicles} />
+      <FilterBar
+        storageKey="financeiro"
+        quick={{ param: "periodo", allLabel: "6 meses", options: PERIOD_PRESETS.map((p) => ({ value: p.value, label: p.label })) }}
+        sort={{ options: Object.entries(SORTS).map(([value, label]) => ({ value, label })) }}
+        fields={[
+          { type: "dates", from: "de", to: "ate", label: "Período personalizado" },
+          { type: "multi", param: "tipo", label: "Tipo de lançamento", options: Object.entries(KINDS).map(([value, label]) => ({ value, label })) },
+          { type: "multi", param: "categoria", label: "Categoria de despesa", options: Object.entries(EXPENSE_CATEGORY).map(([value, label]) => ({ value, label })) },
+          { type: "select", param: "veiculo", label: "Veículo", options: fin.vehicles.map((v) => ({ value: v.id, label: `${v.brand} ${v.model} · ${v.plate}` })) },
+          { type: "range", min: "valor_min", max: "valor_max", label: "Valor", unit: "R$", step: 50, inputMode: "decimal" },
+        ]}
+      />
+      <p className="-mt-2 mb-4 text-xs text-muted">Período: {date(f.from)} a {date(f.to)}</p>
       <MetricStrip
         className="mb-5"
         items={[
@@ -42,7 +77,7 @@ export default async function FinancePage({ searchParams }: PageProps<"/painel/f
         ]}
       />
       <div className="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
+        <Card className="min-w-0 lg:col-span-2">
           <CardHeader title="Receitas × despesas por mês" />
           <CardBody><RevenueExpenseChart data={fin.months} /></CardBody>
           <details className="border-t border-border px-5 py-3 text-sm">
@@ -58,51 +93,59 @@ export default async function FinancePage({ searchParams }: PageProps<"/painel/f
           <CardBody><CategoryBars data={fin.byCategory} /></CardBody>
         </Card>
       </div>
+
       <Card className="mb-5">
-        <CardHeader title="Lucro estimado por veículo" description="Receitas pagas − despesas atribuídas ao veículo no período." />
-        <Table>
-          <thead><tr><Th>Veículo</Th><Th className="text-right">Receitas</Th><Th className="text-right">Despesas</Th><Th className="text-right">Lucro</Th></tr></thead>
-          <tbody>
-            {fin.byVehicle.map((v) => (
-              <tr key={v.id}>
-                <Td>{v.label} <span className="font-mono text-xs text-muted">{v.plate}</span></Td>
-                <Td className="text-right tabular-nums">{brl(v.revenue)}</Td>
-                <Td className="text-right tabular-nums">{brl(v.expenses)}</Td>
-                <Td className={`text-right font-medium tabular-nums ${v.profit < 0 ? "text-danger" : ""}`}>{brl(v.profit)}</Td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+        <CardHeader title="Movimentações" description="Recebimentos, parcelas a receber e despesas conforme os filtros." />
+        <DataTable
+          emptyState="Nenhuma movimentação corresponde aos filtros."
+          mobile={{ title: "title", badge: "kind", subtitle: "detail", meta: ["date"], aside: "amount", actions: "actions" }}
+          minWidth={760}
+          columns={[
+            { key: "date", label: "Data" },
+            { key: "kind", label: "Tipo" },
+            { key: "title", label: "Lançamento" },
+            { key: "detail", label: "Detalhe" },
+            { key: "amount", label: "Valor", align: "right" },
+            { key: "actions", label: "" },
+          ]}
+          rows={movements.slice(0, 200).map((m) => ({
+            id: m.id,
+            cells: {
+              date: <span className="whitespace-nowrap tabular-nums">{date(m.date)}</span>,
+              kind: <Badge tone={TONE[m.kind]}>{KINDS[m.kind]}</Badge>,
+              title: m.href ? <Link href={m.href} className="font-medium text-primary hover:underline">{m.title}</Link> : <span className="font-medium">{m.title}</span>,
+              detail: <span className="text-muted">{m.detail}</span>,
+              amount: <span className={m.kind === "receita" ? "text-success" : m.kind === "despesa" ? "text-danger" : m.kind === "vencida" ? "font-medium text-danger" : ""}>{SIGN[m.kind]}{brl(m.amount)}</span>,
+              actions: m.deletable ? <ConfirmAction action={deleteExpense.bind(null, m.deletable)} label="Excluir" size="sm" variant="ghost" title="Excluir despesa?" confirmLabel="Excluir" /> : null,
+            },
+          }))}
+        />
+        {movements.length > 200 && <p className="border-t border-border px-5 py-3 text-xs text-muted">Mostrando 200 de {movements.length}. Refine o período ou exporte o relatório completo.</p>}
       </Card>
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-        <Card>
-          <CardHeader title="Recebimentos" />
-          <ul className="divide-y divide-border text-sm">
-            {fin.payments.slice(0, 15).map((p) => (
-              <li key={p.id} className="flex items-center justify-between gap-2 px-5 py-2.5">
-                <span className="min-w-0"><Link href={`/painel/contratos/${p.rental.id}`} className="text-primary hover:underline">{p.rental.code}</Link> · parcela {p.number}<span className="block truncate text-xs text-muted">{p.rental.renter?.full_name} · {dateTime(p.paid_at)} · {PAYMENT_METHOD[p.payment_method as keyof typeof PAYMENT_METHOD]}</span></span>
-                <span className="tabular-nums text-success">+{brl(p.amount)}</span>
-              </li>
-            ))}
-            {fin.payments.length === 0 && <li className="px-5 py-3 text-muted">Nenhum recebimento no período.</li>}
-          </ul>
-        </Card>
-        <Card>
-          <CardHeader title="Despesas" />
-          <ul className="divide-y divide-border text-sm">
-            {fin.expenses.slice(0, 15).map((e) => (
-              <li key={e.id} className="flex items-center justify-between gap-2 px-5 py-2.5">
-                <span className="min-w-0">{EXPENSE_CATEGORY[e.category]}<span className="block truncate text-xs text-muted">{e.description ?? "—"} · {e.vehicle ? `${e.vehicle.brand} ${e.vehicle.model}` : "Geral"} · {date(e.spent_at)}</span></span>
-                <span className="flex items-center gap-2">
-                  <span className="tabular-nums text-danger">−{brl(e.amount)}</span>
-                  {!e.maintenance_id && !e.fine_id && <ConfirmAction action={deleteExpense.bind(null, e.id)} label="Excluir" size="sm" variant="ghost" title="Excluir despesa?" confirmLabel="Excluir" />}
-                </span>
-              </li>
-            ))}
-            {fin.expenses.length === 0 && <li className="px-5 py-3 text-muted">Nenhuma despesa no período.</li>}
-          </ul>
-        </Card>
-      </div>
+
+      <Card>
+        <CardHeader title="Lucro estimado por veículo" description="Receitas pagas − despesas atribuídas ao veículo no período." />
+        <DataTable
+          mobile={{ title: "vehicle", meta: ["revenue", "expenses"], aside: "profit" }}
+          initialSort={{ key: "profit", dir: "desc" }}
+          columns={[
+            { key: "vehicle", label: "Veículo", sortable: true },
+            { key: "revenue", label: "Receitas", align: "right", sortable: true },
+            { key: "expenses", label: "Despesas", align: "right", sortable: true },
+            { key: "profit", label: "Lucro", align: "right", sortable: true },
+          ]}
+          rows={fin.byVehicle.map((v) => ({
+            id: v.id,
+            sort: { vehicle: v.label, revenue: v.revenue, expenses: v.expenses, profit: v.profit },
+            cells: {
+              vehicle: <span>{v.label} <span className="font-mono text-xs text-muted">{v.plate}</span></span>,
+              revenue: brl(v.revenue),
+              expenses: brl(v.expenses),
+              profit: <span className={`font-medium ${v.profit < 0 ? "text-danger" : ""}`}>{brl(v.profit)}</span>,
+            },
+          }))}
+        />
+      </Card>
     </>
   );
 }

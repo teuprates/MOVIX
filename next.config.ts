@@ -20,6 +20,9 @@ const publicEnv = {
     process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : ""),
 };
 
+/** Versão do build para o service worker (um SW novo por deploy). Não é segredo. */
+const MOVIX_BUILD = (process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.VERCEL_DEPLOYMENT_ID ?? Date.now().toString(36)).slice(0, 12);
+
 const supabaseHost = (() => {
   try {
     return new URL(publicEnv.NEXT_PUBLIC_SUPABASE_URL).hostname;
@@ -32,7 +35,7 @@ const nextConfig: NextConfig = {
   // D-003: modelo dinâmico tradicional (rotas autenticadas leem cookies em toda requisição).
   cacheComponents: false,
   poweredByHeader: false,
-  env: Object.fromEntries(Object.entries(publicEnv).filter(([, v]) => v)),
+  env: { ...Object.fromEntries(Object.entries(publicEnv).filter(([, v]) => v)), MOVIX_BUILD },
   serverExternalPackages: ["exceljs", "pdf-lib"],
   experimental: {
     serverActions: { bodySizeLimit: "12mb" },

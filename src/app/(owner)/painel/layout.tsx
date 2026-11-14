@@ -5,6 +5,7 @@ import { MovixMark } from "@/components/brand";
 import { CommandMenu, type CommandItem } from "@/components/shell/command-menu";
 import { MobileDrawer, OrgSwitcher, SidebarNav, type NavItem } from "@/components/shell/nav";
 import { QuickCreate, type QuickAction } from "@/components/shell/quick-create";
+import { OwnerTabBar } from "@/components/shell/owner-tabbar";
 import { NotificationBell, UserBlock } from "@/components/shell/user-menu";
 import { requireOwner } from "@/lib/auth/context";
 import { publicUrl } from "@/lib/storage";
@@ -71,7 +72,8 @@ export default async function OwnerLayout({ children }: LayoutProps<"/painel">) 
       </div>
     </div>
   );
-  const sidebar = (
+  // Função (não elemento único): cada lugar recebe sua própria árvore, com ids de SVG distintos
+  const sidebar = () => (
     <div className="flex h-full min-h-0 flex-col gap-4">
       <Link href="/painel" className="flex items-center gap-2.5 rounded-lg px-2 py-1.5">
         <MovixMark className="h-6" title="" />
@@ -87,12 +89,12 @@ export default async function OwnerLayout({ children }: LayoutProps<"/painel">) 
   );
 
   return (
-    <div className="min-h-dvh bg-bg" style={{ "--brand": org.primary_color } as CSSProperties}>
-      <aside aria-label="Menu lateral" className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-rail-border bg-rail p-3 text-rail-fg lg:block">{sidebar}</aside>
+    <div className="min-h-dvh bg-bg pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0" style={{ "--brand": org.primary_color } as CSSProperties}>
+      <aside aria-label="Menu lateral" className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-rail-border bg-rail p-3 text-rail-fg lg:block">{sidebar()}</aside>
       <div className="lg:pl-64">
-        <header className="glass sticky top-0 z-30 border-b border-border">
+        <header className="glass sticky top-0 z-30 border-b border-border pt-[env(safe-area-inset-top)]">
           <div className="mx-auto flex h-14 max-w-[90rem] items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8">
-            <MobileDrawer>{sidebar}</MobileDrawer>
+            <MobileDrawer>{sidebar()}</MobileDrawer>
             <div className="min-w-0 flex-1"><CommandMenu items={commands} /></div>
             <OrgSwitcher area="owner" activeId={orgId} orgs={ctx.memberships.map((m) => ({ id: m.organization_id, name: m.organization.name }))} className="hidden md:flex" />
             <NotificationBell href="/painel/notificacoes" unread={unread ?? 0} />
@@ -101,6 +103,7 @@ export default async function OwnerLayout({ children }: LayoutProps<"/painel">) 
         </header>
         <main id="conteudo" className="mx-auto w-full max-w-[90rem] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</main>
       </div>
+      <OwnerTabBar pending={(pendingMembers ?? 0) + (pendingInspections ?? 0)} />
     </div>
   );
 }

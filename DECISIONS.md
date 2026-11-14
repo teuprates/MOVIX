@@ -62,3 +62,16 @@ Formato: **ID — decisão** · motivo · consequência.
 - **D-022 — Busca Ctrl K e tabela ordenável no cliente.** `CommandMenu` (dialog nativo) indexa páginas, ações, veículos e
   contratos já autorizados pela RLS no layout; `DataTable` ordena e filtra localmente linhas renderizadas no servidor
   (volumes de pequena frota). Filtros de status por URL continuam no servidor.
+- **D-023 — Filtros no servidor, sincronizados com a URL.** `FilterBar` (cliente) só monta parâmetros; cada página lê com
+  `filters()` (`src/lib/filters.ts`, valores saneados/whitelist) e filtra na consulta Supabase sob RLS. Restrições entre
+  tabelas viram listas de ids da própria locadora. Última visualização lembrada por lista em `sessionStorage` (só a query
+  string, sem dados). "Carregar mais" por `?mais=n` com `count: exact`.
+- **D-024 — Service worker servido por route handler com a versão do build.** `/sw.js` traz `MOVIX_BUILD` (commit) → um SW
+  novo por deploy, com aviso "Nova versão — Atualizar" (sem recarregar sozinho). Pré-cacheia /offline com seus CSS/JS;
+  navegação network-first com tempo limite; cache estático com limite. Nunca intercepta /api, Server Actions, Supabase
+  ou terceiros, e nunca guarda páginas autenticadas, contratos ou finanças.
+- **D-025 — Navegação mobile.** Barra inferior para proprietário (Início, Frota, Contratos, Financeiro, Menu) e locatário;
+  modais viram bottom sheets abaixo de `sm`; tabelas viram cartões abaixo de `md`; campos com 16 px (sem zoom no iOS) e
+  alvos de toque ≥ 44 px no celular; áreas seguras (`env(safe-area-inset-*)`) no header, barras e drawer (em portal).
+- **D-026 — Sem rede, nada é simulado.** `blockIfOffline()` impede Server Actions offline com aviso explícito; falhas de
+  rede viram mensagem de "tente novamente". Formulário de veículo em etapas no celular (um único envio, validação por etapa).

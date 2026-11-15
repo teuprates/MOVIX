@@ -21,7 +21,7 @@ const TABS = [
   { key: "frota", label: "Frota", icon: Car },
   { key: "financeiro", label: "Financeiro", icon: BarChart3 },
   { key: "mapa", label: "Rastreamento", icon: MapPinned },
-  { key: "assistente", label: "Assistente", icon: Bot },
+  { key: "assistente", label: "Vix IA", icon: Bot },
 ] as const;
 
 const STATUS = { available: ["Disponível", "success"], reserved: ["Reservado", "info"], rented: ["Alugado", "primary"], maintenance: ["Manutenção", "warning"] } as const;

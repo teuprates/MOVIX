@@ -158,7 +158,7 @@ export default async function RenterHome() {
                 <Link href="/app/assistente" className="group flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-surface-2/60">
                   <span className="grid size-9 place-items-center rounded-lg bg-info-soft text-accent"><Bot className="size-4" aria-hidden /></span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-medium">Falar com o assistente</span>
+                    <span className="block text-sm font-medium">Falar com a Vix IA</span>
                     <span className="block text-xs text-muted">Contrato, pagamentos, vistoria e uso do veículo</span>
                   </span>
                   <ChevronRight className="size-4 text-subtle transition-transform group-hover:translate-x-0.5" aria-hidden />

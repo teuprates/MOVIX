@@ -4,6 +4,7 @@ import { z } from "zod";
 import { renterActionContext } from "@/lib/auth/context";
 import { scriptedAnswer, type AssistantContext } from "@/lib/domain/assistant";
 import { todayIso } from "@/lib/format";
+import { consumeRateLimit } from "@/lib/rate-limit";
 
 /**
  * Assistente do locatário. Sempre há o modo roteirizado; se ANTHROPIC_API_KEY estiver configurada (somente servidor),
@@ -13,16 +14,6 @@ const bodySchema = z.object({
   message: z.string().trim().min(1).max(500),
   history: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().max(1500) })).max(10).default([]),
 });
-
-// Rate limit simples em memória (por instância): 12 mensagens/minuto por usuário.
-const hits = new Map<string, number[]>();
-function limited(userId: string) {
-  const now = Date.now();
-  const recent = (hits.get(userId) ?? []).filter((t) => now - t < 60_000);
-  recent.push(now);
-  hits.set(userId, recent);
-  return recent.length > 12;
-}
 
 async function buildContext(ctx: Awaited<ReturnType<typeof renterActionContext>>): Promise<AssistantContext> {
   const { supabase, userId, orgId } = ctx;
@@ -48,7 +39,7 @@ async function buildContext(ctx: Awaited<ReturnType<typeof renterActionContext>>
   };
 }
 
-const SYSTEM = `Você é o assistente do app MOVIX para locatários de veículos. Responda em português do Brasil, de forma curta (até 4 frases), cordial e prática.
+const SYSTEM = `Você é Vix, a assistente virtual do MOVIX para locatários de veículos. Apresente-se como Vix quando houver uma saudação ou perguntarem quem você é. Responda em português do Brasil, de forma curta (até 4 frases), cordial e objetiva.
 Use apenas o CONTEXTO fornecido sobre o usuário; não invente valores, datas ou políticas. Se não souber, oriente a falar com a locadora pelo botão de WhatsApp da locação.
 Pagamentos no app são simulados (sem cobrança real). O aceite de contrato é eletrônico e não é assinatura digital certificada. Em emergências, oriente ligar 190/192/193.
 Não peça nem repita dados pessoais sensíveis (CPF, CNH, cartão).`;
@@ -62,7 +53,8 @@ export async function POST(request: NextRequest) {
   }
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Mensagem inválida" }, { status: 400 });
-  if (limited(ctx.userId)) return NextResponse.json({ error: "Muitas mensagens. Aguarde um minuto." }, { status: 429 });
+  // Rate limit persistente no Postgres (vale entre instâncias): 12 mensagens/minuto por usuário.
+  if (!(await consumeRateLimit(ctx.supabase, "assistente", 12, 60))) return NextResponse.json({ error: "Muitas mensagens. Aguarde um minuto." }, { status: 429 });
 
   const context = await buildContext(ctx);
   const fallback = () => NextResponse.json({ reply: scriptedAnswer(parsed.data.message, context), mode: "roteiro" });
@@ -70,11 +62,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const client = new Anthropic({ timeout: 20_000, maxRetries: 1 });
-    const response = await client.beta.messages.create({
-      model: "claude-opus-5-5",
+    const response = await client.messages.create({
+      model: "claude-haiku-5-5",
       max_tokens: 1024,
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
       output_config: { effort: "low" },
       system: SYSTEM,
       messages: [

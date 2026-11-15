@@ -23,7 +23,7 @@ const PILLARS = [
     icon: UserRound,
     tag: "Locatário",
     title: "Um app simples no bolso",
-    text: "Cadastro por convite, aceite eletrônico do contrato, parcelas por Pix ou cartão simulados, vistorias com fotos e assistente.",
+    text: "Cadastro por convite, aceite eletrônico do contrato, parcelas por Pix ou cartão simulados, vistorias com fotos e Vix IA.",
     points: ["Múltiplas locadoras na mesma conta", "Vistoria de retirada e devolução", "Ocorrências com anexos"],
   },
 ];

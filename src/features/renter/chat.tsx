@@ -8,7 +8,7 @@ type Msg = { role: "user" | "assistant"; content: string; mode?: "ia" | "roteiro
 
 /** Chat do locatário. `endpoint` permite reutilizar na demo pública com respostas locais. */
 export function AssistantChat({ suggestions, aiEnabled, localAnswer }: { suggestions: string[]; aiEnabled: boolean; localAnswer?: (q: string) => string }) {
-  const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: "Olá! Sou o assistente MOVIX. Posso ajudar com parcelas, contratos, vistorias e ocorrências.", mode: "roteiro" }]);
+  const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: "Olá! Sou a Vix, a assistente virtual do MOVIX. Posso ajudar com parcelas, contratos, vistorias e ocorrências.", mode: "roteiro" }]);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
@@ -44,17 +44,17 @@ export function AssistantChat({ suggestions, aiEnabled, localAnswer }: { suggest
       <div className="flex items-center gap-2 border-b border-border px-4 py-3">
         <span className="grid size-8 place-items-center rounded-lg bg-primary-soft text-brand"><Bot className="size-4" /></span>
         <div className="flex-1">
-          <p className="text-sm font-semibold">Assistente MOVIX</p>
-          <p className="text-[11px] text-muted">{aiEnabled ? "IA (Claude) com respostas de roteiro como reserva" : "Respostas roteirizadas — IA não configurada"}</p>
+          <p className="text-sm font-semibold">Vix IA</p>
+          <p className="text-[11px] text-muted">{aiEnabled ? "IA com respostas de roteiro simulado como reserva" : "Respostas roteirizadas — IA não configurada"}</p>
         </div>
-        <SimulatedBadge>{aiEnabled ? "IA opcional" : "roteiro"}</SimulatedBadge>
+        {!aiEnabled && <SimulatedBadge>roteiro simulado</SimulatedBadge>}
       </div>
       <div className="flex-1 space-y-3 overflow-y-auto p-4" aria-live="polite">
         {messages.map((m, i) => (
           <div key={i} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
             <div className={cn("max-w-[85%] rounded-2xl px-3.5 py-2 text-sm", m.role === "user" ? "rounded-br-sm bg-primary text-white" : "rounded-bl-sm bg-surface-2")}>
               {m.content}
-              {m.role === "assistant" && m.mode && i > 0 && <span className="mt-1 block text-[10px] uppercase tracking-wide opacity-60">{m.mode === "ia" ? "resposta por IA" : "resposta roteirizada"}</span>}
+              {m.role === "assistant" && m.mode && <div className="mt-1">{m.mode === "roteiro" ? <SimulatedBadge>resposta roteirizada — simulado</SimulatedBadge> : <span className="block text-[10px] uppercase tracking-wide opacity-60">resposta por IA</span>}</div>}
             </div>
           </div>
         ))}

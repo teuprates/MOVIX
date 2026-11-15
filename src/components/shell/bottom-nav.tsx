@@ -8,7 +8,7 @@ const ITEMS = [
   { href: "/app", label: "Início", icon: Home, exact: true },
   { href: "/app/parcelas", label: "Pagamentos", icon: CreditCard },
   { href: "/app/ocorrencias", label: "Ocorrências", icon: ShieldAlert },
-  { href: "/app/assistente", label: "Assistente", icon: Bot },
+  { href: "/app/assistente", label: "Vix IA", icon: Bot },
   { href: "/app/perfil", label: "Perfil", icon: UserRound },
 ];
 

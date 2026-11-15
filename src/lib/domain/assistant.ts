@@ -84,7 +84,7 @@ const INTENTS: Intent[] = [
 export function scriptedAnswer(message: string, ctx: AssistantContext) {
   const text = norm(message);
   if (/^(oi|ola|bom dia|boa tarde|boa noite|e ai)\b/.test(text)) {
-    return `Olá, ${ctx.firstName}! Posso ajudar com parcelas, contratos, vistorias, ocorrências, prazos e documentos. O que você precisa?`;
+    return `Olá, ${ctx.firstName}! Sou a Vix, a assistente virtual do MOVIX. Posso ajudar com parcelas, contratos, vistorias, ocorrências, prazos e documentos. O que você precisa?`;
   }
   const scored = INTENTS.map((i) => ({ i, score: i.words.filter((w) => text.includes(w)).length })).sort((a, b) => b.score - a.score);
   if (scored[0]?.score) return scored[0].i.answer(ctx);

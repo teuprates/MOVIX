@@ -17,7 +17,7 @@ const FEATURES = [
   { icon: CalendarCheck2, title: "Calendário sem conflitos", text: "Reservas e bloqueios protegidos no banco: duas reservas simultâneas nunca se sobrepõem." },
   { icon: MapPinned, title: "Rastreamento demonstrativo", text: "Mapa com rotas, velocidade e geofence fictícios — claramente rotulado, sem GPS físico." },
   { icon: BarChart3, title: "Finanças e relatórios", text: "Receitas, despesas por categoria, lucro por veículo, PDF e Excel filtrados." },
-  { icon: Bot, title: "Insights e assistente", text: "Alertas de rentabilidade e inadimplência por regras, e chatbot para o locatário." },
+  { icon: Bot, title: "Insights e Vix IA", text: "Alertas de rentabilidade e inadimplência por regras, e Vix IA para o locatário." },
   { icon: Smartphone, title: "PWA instalável", text: "Experiência de app no celular do locatário, tema claro/escuro e acessibilidade." },
 ];
 
@@ -54,7 +54,7 @@ export default function LandingPage() {
             <div className="max-w-xl">
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan">Demo pública</p>
               <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight">Explore o painel sem criar conta.</h2>
-              <p className="mt-3 text-muted">Dados 100% fictícios, isolados do banco real. Clique, simule pagamentos, acompanhe o mapa e converse com o assistente.</p>
+              <p className="mt-3 text-muted">Dados 100% fictícios, isolados do banco real. Clique, simule pagamentos, acompanhe o mapa e converse com a Vix IA.</p>
             </div>
             <Link href="/demonstracao" className={buttonClass("primary", "lg")}><PlayCircle className="size-5" /> Abrir demo interativa</Link>
           </Reveal>

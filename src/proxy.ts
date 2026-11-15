@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { buildContentSecurityPolicy } from "@/lib/csp";
 
 const PROTECTED = ["/painel", "/app", "/admin", "/demo", "/onboarding", "/inicio", "/conta"];
 
@@ -9,22 +10,40 @@ const PROTECTED = ["/painel", "/app", "/admin", "/demo", "/onboarding", "/inicio
  */
 export async function proxy(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const csp = buildContentSecurityPolicy(nonce, url, process.env.NODE_ENV, request.nextUrl.protocol === "https:");
+  const withCsp = (response: NextResponse) => {
+    response.headers.set("Content-Security-Policy", csp);
+    return response;
+  };
+  const nextResponse = () => {
+    // Recriar após setAll para encaminhar também os cookies renovados ao servidor.
+    const headers = new Headers(request.headers);
+    headers.set("x-nonce", nonce);
+    headers.set("Content-Security-Policy", csp);
+    return withCsp(NextResponse.next({ request: { headers } }));
+  };
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const path = request.nextUrl.pathname;
   const isProtected = PROTECTED.some((p) => path === p || path.startsWith(`${p}/`));
 
   if (!url || !key) {
-    if (isProtected) return NextResponse.redirect(new URL("/configuracao", request.url));
-    return NextResponse.next();
+    if (isProtected) return withCsp(NextResponse.redirect(new URL("/configuracao", request.url)));
+    return nextResponse();
   }
 
-  let response = NextResponse.next({ request });
+  let response = nextResponse();
+  const redirect = (destination: URL) => {
+    const redirected = withCsp(NextResponse.redirect(destination));
+    response.cookies.getAll().forEach((cookie) => redirected.cookies.set(cookie));
+    return redirected;
+  };
   const supabase = createServerClient(url, key, {
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll: (toSet) => {
         toSet.forEach(({ name, value }) => request.cookies.set(name, value));
-        response = NextResponse.next({ request });
+        response = nextResponse();
         toSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
       },
     },
@@ -36,10 +55,10 @@ export async function proxy(request: NextRequest) {
   if (isProtected && !signedIn) {
     const login = new URL("/entrar", request.url);
     login.searchParams.set("next", path + request.nextUrl.search);
-    return NextResponse.redirect(login);
+    return redirect(login);
   }
   if (signedIn && (path === "/entrar" || path === "/cadastro")) {
-    return NextResponse.redirect(new URL("/inicio", request.url));
+    return redirect(new URL("/inicio", request.url));
   }
   return response;
 }

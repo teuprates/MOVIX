@@ -3,6 +3,14 @@ import { expect, test } from "@playwright/test";
 /** Jornadas públicas: não dependem de Supabase. */
 
 test.describe("landing", () => {
+  test("home envia CSP com nonce e proteção contra enquadramento", async ({ request }) => {
+    const response = await request.get("/");
+    expect(response.ok()).toBeTruthy();
+    const csp = response.headers()["content-security-policy"];
+    expect(csp).toContain("nonce-");
+    expect(csp).toContain("frame-ancestors 'none'");
+  });
+
   test("hero, pilares e CTA para a demo", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Sua frota");
@@ -54,7 +62,7 @@ test.describe("demo pública (dados fictícios, sem banco)", () => {
     await expect(page.getByText("Health Score (estimado)").first()).toBeVisible();
     await page.getByRole("tab", { name: /Rastreamento/ }).click();
     await expect(page.getByText("Demonstração — sem GPS físico").first()).toBeVisible();
-    await page.getByRole("tab", { name: /Assistente/ }).click();
+    await page.getByRole("tab", { name: /Vix IA/ }).click();
     await page.getByRole("textbox", { name: "Mensagem" }).fill("quando vence minha parcela?");
     await page.getByRole("button", { name: "Enviar" }).click();
     await expect(page.getByText(/Sua próxima parcela é de/)).toBeVisible();

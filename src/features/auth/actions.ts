@@ -4,15 +4,12 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SITE_URL, isSupabaseConfigured } from "@/lib/env";
 import { translateError } from "@/lib/errors";
+import { safeNext } from "@/lib/safe-redirect";
 import { fail, parseForm, success, type FormState } from "@/lib/form-state";
 import { newPasswordSchema, resetRequestSchema, signInSchema, signUpSchema } from "@/lib/validation/schemas";
 
 const notConfigured = () => fail("Supabase não configurado neste ambiente. Veja /configuracao.");
 
-/** Aceita apenas caminhos internos para evitar open redirect. */
-export async function safeNext(next: unknown, fallback = "/inicio") {
-  return typeof next === "string" && next.startsWith("/") && !next.startsWith("//") ? next : fallback;
-}
 
 async function origin() {
   const h = await headers();
@@ -28,7 +25,7 @@ export async function signIn(_: FormState, formData: FormData): Promise<FormStat
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email: data.email, password: data.password });
   if (error) return fail(translateError(error));
-  redirect(await safeNext(data.next));
+  redirect(safeNext(data.next));
 }
 
 export async function signUp(_: FormState, formData: FormData): Promise<FormState> {
@@ -36,7 +33,7 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
   if (!data) return state;
   if (!isSupabaseConfigured()) return notConfigured();
   const role = formData.get("intended_role") === "renter" ? "renter" : "owner";
-  const next = await safeNext(formData.get("next"), role === "owner" ? "/onboarding" : "/inicio");
+  const next = safeNext(formData.get("next"), role === "owner" ? "/onboarding" : "/inicio");
   const supabase = await createClient();
   const { data: res, error } = await supabase.auth.signUp({
     email: data.email,

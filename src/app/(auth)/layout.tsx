@@ -27,7 +27,7 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
               <li className="flex gap-3"><Sparkles className="size-5 shrink-0 text-cyan" aria-hidden /> Vistorias com fotos, manutenção, alertas e insights.</li>
             </ul>
           </div>
-          <p className="relative text-xs text-subtle">© {new Date().getFullYear()} MOVIX · Projeto acadêmico (TCC)</p>
+          <p className="relative text-xs text-subtle">© {new Date().getFullYear()} MOVIX · SENAI CIMATEC</p>
         </aside>
         <main id="conteudo" className="flex flex-col px-4 pb-safe-8 pt-safe-8 sm:px-8">
           <Link href="/" className="mb-8 w-fit lg:hidden">

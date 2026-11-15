@@ -4,7 +4,7 @@ export default function PrivacyPage() {
   return (
     <article className="mx-auto max-w-3xl px-4 pb-20 pt-safe-28 text-sm leading-relaxed text-muted sm:px-6">
       <h1 className="font-display text-3xl font-semibold text-fg">Política de privacidade</h1>
-      <p className="mt-2 text-xs">Orientações alinhadas à LGPD (Lei 13.709/2018) para um protótipo acadêmico. Não representa certificação de conformidade jurídica.</p>
+      <p className="mt-2 text-xs">Orientações alinhadas à LGPD (Lei 13.709/2018) para um protótipo desenvolvido no SENAI CIMATEC. Não representa certificação de conformidade jurídica.</p>
       <h2 className="mt-8 font-display text-lg font-semibold text-fg">Dados tratados</h2>
       <p className="mt-2">Proprietários: nome, e-mail e dados cadastrais da locadora. Locatários: nome, CPF, nascimento, contatos, endereço, CNH, contato de emergência, foto da CNH e comprovante de residência — exigidos para a análise de locação.</p>
       <h2 className="mt-6 font-display text-lg font-semibold text-fg">Finalidade e minimização</h2>

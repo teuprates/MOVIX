@@ -35,7 +35,7 @@ export default function MarketingLayout({ children }: LayoutProps<"/">) {
             <Link href="/privacidade" className="hover:text-fg">Privacidade</Link>
             <Link href="/entrar" className="hover:text-fg">Entrar</Link>
           </nav>
-          <p className="text-xs text-subtle">Projeto acadêmico (TCC) · Pagamentos, GPS e IA de demonstração são simulados.</p>
+          <p className="text-xs text-subtle">SENAI CIMATEC · Pagamentos, GPS e IA de demonstração são simulados.</p>
         </div>
       </footer>
     </div>

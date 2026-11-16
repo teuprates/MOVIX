@@ -71,23 +71,21 @@ test("locatário: duas locadoras, troca sem vazamento e aceite + pagamento simul
   await expect(page).toHaveURL(/\/app/);
   await expect(page.getByRole("combobox", { name: "Trocar locadora" })).toBeVisible();
   const pending = page.getByText("Contrato aguardando seu aceite");
-  if (await pending.isVisible()) {
-    await pending.click();
-    await page.getByRole("checkbox").check();
-    await page.getByRole("button", { name: "Aceitar contrato" }).click();
-    await expect(page.getByText(/aceito eletronicamente/).first()).toBeVisible();
-  }
+  await expect(pending).toBeVisible();
+  await pending.click();
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Aceitar contrato" }).click();
+  await expect(page.getByText(/aceito eletronicamente/).first()).toBeVisible();
   await page.goto("/app/parcelas");
   const pay = page.getByRole("button", { name: "Pagar", exact: true }).first();
-  if (await pay.isVisible()) {
-    await pay.click();
-    await expect(page.getByText("Ambiente de demonstração")).toBeVisible();
-    await page.getByRole("tab", { name: "Cartão" }).click();
-    await expect(page.getByText("Sem número, validade ou CVV")).toBeVisible();
-    await expect(page.locator("dialog input")).toHaveCount(0); // nenhum campo de cartão
-    await page.getByRole("button", { name: "Confirmar pagamento simulado" }).click();
-    await expect(page.getByText(/Pagamento simulado confirmado/)).toBeVisible();
-  }
+  await expect(pay).toBeVisible();
+  await pay.click();
+  await expect(page.getByText("Ambiente de demonstração")).toBeVisible();
+  await page.getByRole("tab", { name: "Cartão" }).click();
+  await expect(page.getByText("Sem número, validade ou CVV")).toBeVisible();
+  await expect(page.locator("dialog input")).toHaveCount(0); // nenhum campo de cartão
+  await page.getByRole("button", { name: "Confirmar pagamento simulado" }).click();
+  await expect(page.getByText(/Pagamento simulado confirmado/)).toBeVisible();
 });
 
 test("locatário vinculado sem contrato ativo não vê chassi; não vinculado não vê veículos", async () => {

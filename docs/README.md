@@ -7,6 +7,7 @@
 - [Tecnologias, limitações e evolução](limitacoes-e-tecnologias.md)
 - [Configuração e deploy](deploy.md)
 - [Roteiro de demonstração para a banca](roteiro-banca.md)
+- [Padronização de fotos (especificação, guia e checklist)](fotos.md)
 
 ## Auditorias e relatórios
 - [Auditoria da experiência PWA](pwa-auditoria.md)

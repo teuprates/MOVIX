@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useActionState, useContext, useEffect, useId, useRef, useState, type ComponentProps, type ReactNode } from "react";
+import { createContext, useActionState, useCallback, useContext, useEffect, useId, useMemo, useRef, useState, type ComponentProps, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -10,6 +10,13 @@ import { maskCep, maskCnpj, maskCpf, maskDocument, maskPhone, maskPlate } from "
 import { blockIfOffline } from "@/lib/offline";
 
 const ErrorsContext = createContext<Record<string, string[] | undefined>>({});
+
+/**
+ * Campos que fazem trabalho assíncrono antes do envio (ex.: FileField otimizando imagens) se registram aqui;
+ * enquanto houver algum ocupado, o envio é bloqueado com aviso e o botão fica desabilitado.
+ */
+const BusyContext = createContext<{ busy: boolean; setBusy: (key: string, busy: boolean) => void }>({ busy: false, setBusy: () => {} });
+export const useFormBusy = () => useContext(BusyContext);
 
 /**
  * Formulário ligado a uma Server Action: exibe erros por campo (acessíveis), toasts de sucesso/erro
@@ -33,6 +40,18 @@ export function ActionForm({
   const ref = useRef<HTMLFormElement>(null);
   const router = useRouter();
   const lastHandled = useRef<FormState | null>(null);
+  const [busyKeys, setBusyKeys] = useState<ReadonlySet<string>>(() => new Set());
+  const busy = busyKeys.size > 0;
+  const setBusy = useCallback((key: string, value: boolean) => {
+    setBusyKeys((prev) => {
+      if (prev.has(key) === value) return prev;
+      const next = new Set(prev);
+      if (value) next.add(key);
+      else next.delete(key);
+      return next;
+    });
+  }, []);
+  const busyValue = useMemo(() => ({ busy, setBusy }), [busy, setBusy]);
 
   useEffect(() => {
     if (!state || state === lastHandled.current || (!state.message && !state.ok)) return;
@@ -52,12 +71,19 @@ export function ActionForm({
 
   return (
     <ErrorsContext.Provider value={state?.ok ? {} : (state?.errors ?? {})}>
+      <BusyContext.Provider value={busyValue}>
       <form
         ref={ref}
         action={formAction}
         noValidate
         className={className}
+        aria-busy={busy || undefined}
         onSubmit={(e) => {
+          if (busy) {
+            e.preventDefault();
+            toast.info("Aguarde: as imagens ainda estão sendo otimizadas.");
+            return;
+          }
           if (blockIfOffline()) e.preventDefault();
         }}
         {...props}
@@ -69,6 +95,7 @@ export function ActionForm({
         )}
         {children}
       </form>
+      </BusyContext.Provider>
     </ErrorsContext.Provider>
   );
 }
@@ -170,9 +197,10 @@ export function MaskedField({
 
 export function SubmitButton({ children, pendingText = "Salvando…", ...props }: ButtonProps & { pendingText?: string }) {
   const { pending } = useFormStatus();
+  const { busy } = useFormBusy();
   return (
-    <Button type="submit" loading={pending} {...props}>
-      {pending ? pendingText : children}
+    <Button type="submit" loading={pending} {...props} disabled={busy || props.disabled}>
+      {pending ? pendingText : busy ? "Otimizando imagens…" : children}
     </Button>
   );
 }

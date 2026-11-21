@@ -77,6 +77,19 @@ contra a API, formulário em etapas e alternância entre dois veículos ativos (
 `docs/capturas/pwa`. Limitações: instalação real em iOS/Android e splash do iOS não são testáveis no Playwright (verificar
 em aparelho); teclado virtual não é emulado (campos 16 px e barra de ações fixa acima da navegação).
 
+## Padronização de fotos (21/11/2026)
+Especificação, relatório e checklist em `docs/fotos.md`; decisões D-027 a D-030. Fotos de veículo normalizadas no
+cliente (4:3, até 1600×1200, WebP/JPEG 82%, EXIF aplicado e removido), vistorias e anexos reduzidos sem recorte,
+`PhotoFrame` 4:3 com skeleton em galeria/lista/vistorias, `FileField` com prévias 4:3, acúmulo, remoção, contador e
+bloqueio de envio durante o processamento. Servidor confere assinatura real, ≤ 5 MB e dimensões mínimas; limite de 12
+fotos também por trigger (migration 0009, **aplicar com `npm run db:push`**).
+- Verificação: lint/typecheck OK, Vitest **146/146** (27 novos: utilitários de imagem com fixtures reais, validação do
+  servidor e trigger de limite em PGlite), build OK, Playwright 44 públicos OK. Normalização conferida no Chromium:
+  retrato 9:16 com EXIF 6 → 1080×810 WebP (veículo) e 900×1600 com orientação correta (evidência), 4000×3000 →
+  1600×1200, metadados removidos, 600×450 recusada. Campo testado em página temporária (acúmulo, limite, remoção,
+  envio com arquivos otimizados, reset e botão bloqueado durante o processamento).
+- Pendente: upload real no Supabase (exige sessão autenticada) e teste em Safari/iOS.
+
 ## Implementado, ainda sem validação automatizada
 Uploads de storage, e-mails de verificação, assistente com IA (sem `ANTHROPIC_API_KEY`, usa o roteiro).
 

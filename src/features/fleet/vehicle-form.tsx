@@ -6,6 +6,7 @@ import { Callout } from "@/components/ui/primitives";
 import { FormSteps } from "@/components/ui/form-steps";
 import type { FormState } from "@/lib/form-state";
 import { FUEL, TRANSMISSION, VEHICLE_STATUS } from "@/lib/labels";
+import { VEHICLE_PHOTO, VEHICLE_PHOTO_LIMITS } from "@/lib/image";
 
 type Defaults = Record<string, string | number | null | undefined>;
 
@@ -63,7 +64,17 @@ export function VehicleForm({ action, defaults = {}, isEdit }: { action: (s: For
 
       <section className="grid gap-5 rounded-2xl border border-border bg-surface p-5 shadow-card lg:grid-cols-2">
         <TextAreaField label="Observações" name="notes" defaultValue={d("notes")} maxLength={2000} />
-        {!isEdit && <FileField name="photos" label="Fotos" multiple accept="image/jpeg,image/png,image/webp" hint="Até 10 imagens JPG/PNG/WEBP, 5 MB cada" />}
+        {!isEdit && (
+          <FileField
+            name="photos"
+            label="Fotos"
+            multiple
+            maxFiles={VEHICLE_PHOTO_LIMITS.onCreate}
+            normalize={VEHICLE_PHOTO}
+            accept="image/jpeg,image/png,image/webp"
+            hint={`Até ${VEHICLE_PHOTO_LIMITS.onCreate} imagens JPG/PNG/WEBP de até 5 MB — enquadradas em 4:3 e otimizadas`}
+          />
+        )}
       </section>
       </FormSteps>
     </ActionForm>

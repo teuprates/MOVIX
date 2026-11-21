@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { ActionForm, SelectField, SubmitButton, TextAreaField, TextField } from "@/components/ui/form";
 import { FileField } from "@/components/ui/file-field";
+import { ATTACHMENT_PHOTO } from "@/lib/image";
 import { Modal } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/primitives";
 import { EXPENSE_CATEGORY, FINE_STATUS, INCIDENT_KIND, MAINTENANCE_KIND } from "@/lib/labels";
@@ -85,7 +86,7 @@ export function IncidentFormButton({ vehicles, rentals, label = "Registrar ocorr
           <TextAreaField label="Descrição" name="description" required className="sm:col-span-2" />
           <TextField label="Quando ocorreu" name="occurred_at" type="datetime-local" required />
           <TextField label="Local" name="location" />
-          <FileField name="attachments" label="Anexos" multiple className="sm:col-span-2" hint="Até 6 arquivos JPG/PNG/WEBP/PDF, 5 MB cada" />
+          <FileField name="attachments" label="Anexos" multiple maxFiles={6} normalize={ATTACHMENT_PHOTO} className="sm:col-span-2" hint="Até 6 arquivos JPG/PNG/WEBP/PDF, 5 MB cada — imagens otimizadas sem cortes" />
           <div className="flex justify-end sm:col-span-2"><SubmitButton>Registrar</SubmitButton></div>
         </ActionForm>
       )}

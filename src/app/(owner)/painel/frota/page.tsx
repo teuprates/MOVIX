@@ -109,7 +109,7 @@ export default async function FleetPage({ searchParams }: PageProps<"/painel/fro
             <li key={v.id}>
               <Card className="group overflow-hidden transition hover:border-primary/50">
                 <Link href={`/painel/frota/${v.id}`} className="flex focus-visible:outline-offset-[-3px] sm:block">
-                  <div className="relative w-32 shrink-0 bg-surface-2 sm:aspect-[16/9] sm:w-auto">
+                  <div className="relative w-32 shrink-0 bg-surface-2 sm:aspect-[4/3] sm:w-auto">
                     {photos[v.id] ? (
                       // eslint-disable-next-line @next/next/no-img-element -- URL assinada temporária
                       <img src={photos[v.id]} alt="" className="size-full object-cover transition group-hover:scale-[1.02]" loading="lazy" decoding="async" />

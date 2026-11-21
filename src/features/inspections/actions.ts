@@ -4,7 +4,8 @@ import { getSession, ownerActionContext } from "@/lib/auth/context";
 import { translateError } from "@/lib/errors";
 import { fail, parseForm, success, type FormState } from "@/lib/form-state";
 import { INSPECTION_CHECKLIST } from "@/lib/labels";
-import { asFile, asFiles, IMAGE_TYPES, uploadFile, validateFile } from "@/lib/storage";
+import { EVIDENCE_PHOTO } from "@/lib/image";
+import { asFile, asFiles, uploadFile, validateImage } from "@/lib/storage";
 import { inspectionSchema } from "@/lib/validation/schemas";
 
 const REQUIRED_ANGLES = ["front", "back", "left", "right", "interior"] as const;
@@ -19,13 +20,14 @@ export async function submitInspection(_: FormState, formData: FormData): Promis
   const photos: { angle: string; file: File }[] = [];
   for (const angle of REQUIRED_ANGLES) {
     const file = asFile(formData.get(`photo_${angle}`));
-    const err = validateFile(file, IMAGE_TYPES, 8 * 1024 * 1024);
+    // Limite do bucket (5 MB) vale para o arquivo já normalizado no cliente; antes era 8 MB e o storage recusava.
+    const err = await validateImage(file, EVIDENCE_PHOTO);
     if (err) errors[`photo_${angle}`] = [err === "Selecione um arquivo." ? "Foto obrigatória." : err];
     else photos.push({ angle, file: file! });
   }
   for (const file of asFiles(formData.getAll("photo_extra")).slice(0, 6)) {
-    const err = validateFile(file, IMAGE_TYPES, 8 * 1024 * 1024);
-    if (err) errors.photo_extra = [err];
+    const err = await validateImage(file, EVIDENCE_PHOTO);
+    if (err) errors.photo_extra = [`"${file.name}": ${err}`];
     else photos.push({ angle: "extra", file });
   }
   if (Object.keys(errors).length) return fail("Envie todas as fotos obrigatórias.", errors);

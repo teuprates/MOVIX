@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Check, Fuel, Gauge, X } from "lucide-react";
 import { Card, CardBody, CardHeader } from "@/components/ui/primitives";
+import { PhotoFrame } from "@/components/ui/photo-frame";
 import { InspectionStatusBadge } from "@/components/status-badges";
 import { INSPECTION_ANGLES, INSPECTION_CHECKLIST, INSPECTION_KIND } from "@/lib/labels";
 import { dateTime, num } from "@/lib/format";
@@ -15,9 +16,8 @@ export function InspectionSummary({ insp }: { insp: InspectionFull }) {
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {insp.photos.map((p, i) => (
               <li key={i} className="overflow-hidden rounded-xl border border-border">
-                <a href={p.url} target="_blank" rel="noopener noreferrer">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- URL assinada temporária */}
-                  <img src={p.url} alt={`Foto: ${INSPECTION_ANGLES[p.angle as keyof typeof INSPECTION_ANGLES]}`} className="aspect-[4/3] w-full object-cover" loading="lazy" />
+                <a href={p.url} target="_blank" rel="noopener noreferrer" className="block" aria-label={`Abrir foto inteira: ${INSPECTION_ANGLES[p.angle as keyof typeof INSPECTION_ANGLES]}`}>
+                  <PhotoFrame src={p.url} alt={`Foto: ${INSPECTION_ANGLES[p.angle as keyof typeof INSPECTION_ANGLES]}`} />
                 </a>
                 <p className="px-2 py-1 text-xs text-muted">{INSPECTION_ANGLES[p.angle as keyof typeof INSPECTION_ANGLES]}</p>
               </li>
@@ -85,8 +85,7 @@ export function InspectionCompare({ a, b }: { a: InspectionFull; b: InspectionFu
                   {[["Retirada", p], ["Devolução", r]].map(([label, photo]) => (
                     <figure key={label as string} className="overflow-hidden rounded-xl border border-border">
                       {photo ? (
-                        // eslint-disable-next-line @next/next/no-img-element -- URL assinada temporária
-                        <img src={(photo as { url: string }).url} alt={`${label} — ${angle}`} className="aspect-[4/3] w-full object-cover" loading="lazy" />
+                        <PhotoFrame src={(photo as { url: string }).url} alt={`${label} — ${angle}`} />
                       ) : (
                         <div className="grid aspect-[4/3] place-items-center bg-surface-2 text-xs text-muted">Sem foto</div>
                       )}

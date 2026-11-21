@@ -5,6 +5,7 @@ import { ActionForm, SubmitButton, TextAreaField, TextField } from "@/components
 import { FileField } from "@/components/ui/file-field";
 import { Callout } from "@/components/ui/primitives";
 import { INSPECTION_ANGLES, INSPECTION_CHECKLIST } from "@/lib/labels";
+import { EVIDENCE_PHOTO } from "@/lib/image";
 import { submitInspection } from "./actions";
 
 export function InspectionForm({ rentalId, kind, supersedesId, minMileage }: { rentalId: string; kind: "pickup" | "return"; supersedesId?: string; minMileage: number }) {
@@ -21,9 +22,9 @@ export function InspectionForm({ rentalId, kind, supersedesId, minMileage }: { r
         <h2 className="mb-3 font-display font-semibold">Fotos obrigatórias</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {(["front", "back", "left", "right", "interior"] as const).map((a) => (
-            <FileField key={a} name={`photo_${a}`} label={INSPECTION_ANGLES[a]} accept="image/jpeg,image/png,image/webp" capture="environment" required maxMb={8} hint="JPG/PNG/WEBP até 8 MB" />
+            <FileField key={a} name={`photo_${a}`} label={INSPECTION_ANGLES[a]} accept="image/jpeg,image/png,image/webp" capture="environment" required maxMb={8} normalize={EVIDENCE_PHOTO} hint="JPG/PNG/WEBP até 8 MB — otimizada sem cortes" />
           ))}
-          <FileField name="photo_extra" label="Fotos extras (danos, detalhes)" accept="image/jpeg,image/png,image/webp" multiple maxMb={8} hint="Opcional, até 6" />
+          <FileField name="photo_extra" label="Fotos extras (danos, detalhes)" accept="image/jpeg,image/png,image/webp" multiple maxFiles={6} maxMb={8} normalize={EVIDENCE_PHOTO} hint="Opcional, até 6 — otimizadas sem cortes" className="sm:col-span-2" />
         </div>
       </section>
       <section className="grid gap-4 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-2 sm:p-5">

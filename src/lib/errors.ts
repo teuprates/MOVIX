@@ -16,6 +16,7 @@ const MESSAGES: Record<string, string> = {
   MOVIX_CANNOT_SUSPEND_SELF: "Você não pode suspender a própria conta.",
   MOVIX_SCOPE_MISMATCH: "Os dados informados pertencem a outra locadora.",
   MOVIX_VEHICLE_NOT_FOUND: "Veículo não encontrado.",
+  MOVIX_VEHICLE_PHOTO_LIMIT: "Limite de 12 fotos por veículo atingido. Remova alguma para adicionar outra.",
   MOVIX_RENTAL_NOT_FOUND: "Locação não encontrada.",
 };
 

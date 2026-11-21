@@ -3,7 +3,8 @@ import { revalidatePath } from "next/cache";
 import { ownerActionContext } from "@/lib/auth/context";
 import { translateError } from "@/lib/errors";
 import { fail, parseForm, success, type FormState } from "@/lib/form-state";
-import { asFiles, IMAGE_TYPES, uploadFile, validateFile } from "@/lib/storage";
+import { photoObjectName, VEHICLE_PHOTO, VEHICLE_PHOTO_LIMITS } from "@/lib/image";
+import { asFiles, uploadFile, validateImages } from "@/lib/storage";
 import { blockSchema, vehicleSchema } from "@/lib/validation/schemas";
 
 function split(data: ReturnType<typeof vehicleSchema.parse>) {
@@ -11,11 +12,26 @@ function split(data: ReturnType<typeof vehicleSchema.parse>) {
   return { vehicle, priv: { chassis, renavam, licensing_due_at, insurance_due_at, ipva_due_at } };
 }
 
-async function uploadPhotos(ctx: Awaited<ReturnType<typeof ownerActionContext>>, vehicleId: string, files: File[], startAt = 0) {
-  for (const [i, file] of files.slice(0, 10).entries()) {
-    const path = await uploadFile(ctx.supabase, "vehicle-media", `${ctx.orgId}/${vehicleId}`, file);
-    const { error } = await ctx.supabase.from("vehicle_media").insert({ vehicle_id: vehicleId, organization_id: ctx.orgId, storage_path: path, position: startAt + i });
-    if (error) throw error;
+type OwnerCtx = Awaited<ReturnType<typeof ownerActionContext>>;
+
+/**
+ * Envia as fotos uma a uma: objeto no storage → linha em vehicle_media. Se a linha falhar, remove o objeto recém-enviado
+ * (sem órfãos). Caminho: {org}/{veículo}/{timestamp}-{nome-original}.{ext} — o 1º segmento é exigido pelas policies.
+ * Posições continuam após a maior existente (exclusões deixam lacunas; contar linhas geraria posições repetidas).
+ */
+async function uploadPhotos(ctx: OwnerCtx, vehicleId: string, files: File[]) {
+  const { data: last } = await ctx.supabase
+    .from("vehicle_media").select("position").eq("vehicle_id", vehicleId).order("position", { ascending: false }).limit(1).maybeSingle();
+  let position = (last?.position ?? -1) + 1;
+  const base = Date.now();
+  for (const [i, file] of files.entries()) {
+    const path = await uploadFile(ctx.supabase, "vehicle-media", `${ctx.orgId}/${vehicleId}`, file, photoObjectName(file.name, base + i));
+    const { error } = await ctx.supabase.from("vehicle_media").insert({ vehicle_id: vehicleId, organization_id: ctx.orgId, storage_path: path, position });
+    if (error) {
+      await ctx.supabase.storage.from("vehicle-media").remove([path]);
+      throw error;
+    }
+    position += 1;
   }
 }
 
@@ -23,7 +39,11 @@ export async function createVehicle(_: FormState, formData: FormData): Promise<F
   const { data, state } = parseForm(vehicleSchema, formData);
   if (!data) return state;
   const photos = asFiles(formData.getAll("photos"));
-  const bad = photos.map((f) => validateFile(f, IMAGE_TYPES)).find(Boolean);
+  if (photos.length > VEHICLE_PHOTO_LIMITS.onCreate) {
+    const msg = `Envie no máximo ${VEHICLE_PHOTO_LIMITS.onCreate} fotos no cadastro; as demais podem ser adicionadas depois.`;
+    return fail(msg, { photos: [msg] });
+  }
+  const bad = await validateImages(photos, VEHICLE_PHOTO);
   if (bad) return fail(bad, { photos: [bad] });
   try {
     const ctx = await ownerActionContext();
@@ -32,8 +52,15 @@ export async function createVehicle(_: FormState, formData: FormData): Promise<F
     if (error) return fail(translateError(error));
     const { error: privErr } = await ctx.supabase.from("vehicle_private_data").insert({ vehicle_id: row.id, organization_id: ctx.orgId, ...priv });
     if (privErr) return fail(translateError(privErr));
-    await uploadPhotos(ctx, row.id, photos);
     revalidatePath("/painel/frota");
+    try {
+      await uploadPhotos(ctx, row.id, photos);
+    } catch (e) {
+      // O veículo já existe: não devolver erro (o reenvio duplicaria o cadastro). Fotos podem ser reenviadas na página dele.
+      return success(`Veículo cadastrado, mas houve falha no envio das fotos (${translateError(e as Error)}). Adicione-as na página do veículo.`, {
+        redirectTo: `/painel/frota/${row.id}`,
+      });
+    }
     return success("Veículo cadastrado.", { redirectTo: `/painel/frota/${row.id}` });
   } catch (e) {
     return fail(translateError(e as Error));
@@ -84,18 +111,25 @@ export async function archiveVehicle(id: string): Promise<FormState> {
 export async function addVehiclePhotos(id: string, _: FormState, formData: FormData): Promise<FormState> {
   const photos = asFiles(formData.getAll("photos"));
   if (photos.length === 0) return fail("Selecione ao menos uma foto.", { photos: ["Selecione ao menos uma foto."] });
-  const bad = photos.map((f) => validateFile(f, IMAGE_TYPES)).find(Boolean);
+  const bad = await validateImages(photos, VEHICLE_PHOTO);
   if (bad) return fail(bad, { photos: [bad] });
   try {
     const ctx = await ownerActionContext();
     const { count } = await ctx.supabase.from("vehicle_media").select("id", { count: "exact", head: true }).eq("vehicle_id", id);
-    if ((count ?? 0) + photos.length > 12) return fail("Limite de 12 fotos por veículo.");
-    await uploadPhotos(ctx, id, photos, count ?? 0);
+    const remaining = VEHICLE_PHOTO_LIMITS.perVehicle - (count ?? 0);
+    if (photos.length > remaining) {
+      const msg = remaining > 0
+        ? `Limite de ${VEHICLE_PHOTO_LIMITS.perVehicle} fotos por veículo: você ainda pode enviar ${remaining}.`
+        : `Limite de ${VEHICLE_PHOTO_LIMITS.perVehicle} fotos por veículo atingido. Remova alguma para adicionar outra.`;
+      return fail(msg, { photos: [msg] });
+    }
+    // A trigger vehicle_media_limit garante o limite também sob envios concorrentes.
+    await uploadPhotos(ctx, id, photos);
   } catch (e) {
     return fail(translateError(e as Error));
   }
   revalidatePath(`/painel/frota/${id}`);
-  return success("Fotos adicionadas.");
+  return success(photos.length === 1 ? "Foto adicionada." : `${photos.length} fotos adicionadas.`);
 }
 
 export async function deleteVehiclePhoto(mediaId: string): Promise<FormState> {
@@ -103,9 +137,13 @@ export async function deleteVehiclePhoto(mediaId: string): Promise<FormState> {
     const ctx = await ownerActionContext();
     const { data: media } = await ctx.supabase.from("vehicle_media").select("storage_path, vehicle_id").eq("id", mediaId).eq("organization_id", ctx.orgId).single();
     if (!media) return fail("Foto não encontrada.");
-    await ctx.supabase.storage.from("vehicle-media").remove([media.storage_path]);
-    const { error } = await ctx.supabase.from("vehicle_media").delete().eq("id", mediaId);
+    // Primeiro a linha (RLS decide), depois o objeto: uma falha no storage deixa no máximo um arquivo órfão,
+    // nunca uma linha apontando para imagem inexistente.
+    const { data: deleted, error } = await ctx.supabase.from("vehicle_media").delete().eq("id", mediaId).select("id");
     if (error) return fail(translateError(error));
+    if (!deleted?.length) return fail("Você não tem permissão para esta ação.");
+    const { error: storageError } = await ctx.supabase.storage.from("vehicle-media").remove([media.storage_path]);
+    if (storageError) console.error("vehicle-media: falha ao remover objeto", media.storage_path, storageError.message);
     revalidatePath(`/painel/frota/${media.vehicle_id}`);
   } catch (e) {
     return fail(translateError(e as Error));

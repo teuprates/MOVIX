@@ -75,3 +75,18 @@ Formato: **ID — decisão** · motivo · consequência.
   alvos de toque ≥ 44 px no celular; áreas seguras (`env(safe-area-inset-*)`) no header, barras e drawer (em portal).
 - **D-026 — Sem rede, nada é simulado.** `blockIfOffline()` impede Server Actions offline com aviso explícito; falhas de
   rede viram mensagem de "tente novamente". Formulário de veículo em etapas no celular (um único envio, validação por etapa).
+- **D-027 — Fotos normalizadas no cliente, revalidadas no servidor.** Cada foto é processada no navegador antes do envio
+  (`src/lib/image.ts`): orientação EXIF, recorte centralizado 4:3 (veículos), no máximo 1600×1200, WebP 82% (ou JPEG
+  se o navegador não gerar WebP), sem metadados (remove GPS). Sem dependência nativa (sem `sharp`): o servidor só lê
+  cabeçalhos para conferir assinatura real × MIME e dimensões mínimas (`validateImage`). O servidor não exige 4:3,
+  para não bloquear quem não conseguiu processar no cliente; a moldura `PhotoFrame` (4:3, `object-cover`) garante a
+  exibição uniforme. Detalhes e checklist em `docs/fotos.md`.
+- **D-028 — Evidências não são recortadas.** Fotos de vistoria e anexos de ocorrência só são reduzidos (lado maior até
+  1600 px) e recomprimidos; cortar poderia esconder avarias. As miniaturas usam a moldura 4:3 e o clique abre a foto
+  inteira. O cartão do locatário (`rental-hero`) segue 16:9 por ser banner, não miniatura.
+- **D-029 — Caminho das fotos de veículo `{org}/{veículo}/{timestamp}-{nome-original}.{ext}`.** O prefixo da locadora é
+  exigido pelas policies de storage; o nome original é normalizado. Fotos antigas (UUID) seguem válidas, pois a
+  exibição usa `storage_path`.
+- **D-030 — Limite de 12 fotos também no banco.** Trigger `vehicle_media_limit` (migration 0009) com lock por veículo,
+  contra envios concorrentes. Posição nova = maior posição + 1. Exclusão apaga a linha antes do objeto, e upload com
+  falha na linha remove o objeto (sem órfãos nem linhas quebradas).

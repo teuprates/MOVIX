@@ -5,7 +5,7 @@
 /* ------------------------------------------------------------------
    Design tokens MOVIX — preto, azul-noite, azul elétrico e ciano.
    Claro é o padrão do :root; .dark sobrescreve. Marketing força .dark.
-   Painéis: trilho lateral azul-noite (--rail*) em ambos os temas (DESIGN.md v2).
+   Painéis: trilho lateral azul-noite (--rail*) em ambos os temas (docs/especificacao/DESIGN.md v2).
    ------------------------------------------------------------------ */
 :root {
   --bg: #f4f6fa;

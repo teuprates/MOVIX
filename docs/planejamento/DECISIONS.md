@@ -2,14 +2,14 @@
 
 Formato: **ID — decisão** · motivo · consequência.
 
-- **D-001 — Next.js 16.4 + React 19 + Tailwind 4 + Supabase.** Stack definida em `ARQUITETURA.md`; versões estáveis
+- **D-001 — Next.js 16.4 + React 19 + Tailwind 4 + Supabase.** Stack definida em `docs/especificacao/ARQUITETURA.md`; versões estáveis
   mais recentes em 13/11/2026. Em Next 16 o middleware chama-se `proxy` (`src/proxy.ts`).
 - **D-002 — Componentes próprios em vez de shadcn/ui.** Menos dependências e controle total dos tokens MOVIX;
   ícones Lucide, gráficos Recharts, toasts Sonner.
 - **D-003 — `cacheComponents` desligado.** Praticamente todas as rotas autenticadas leem cookies de sessão; o modelo
   dinâmico tradicional evita exigências de `<Suspense>` em todo acesso dinâmico e o estado preservado por `<Activity>`
   em formulários sensíveis. Landing e demo pública continuam estáticas.
-- **D-004 — Motion (sem GSAP).** `ARQUITETURA.md` cita GSAP/ScrollTrigger **e** Motion como opcionais. Motion cobre
+- **D-004 — Motion (sem GSAP).** `docs/especificacao/ARQUITETURA.md` cita GSAP/ScrollTrigger **e** Motion como opcionais. Motion cobre
   scroll-linked parallax (`useScroll/useTransform`), ponteiro e `useReducedMotion` com um único pacote React, reduzindo bundle.
 - **D-005 — Testes de banco com PGlite.** Não há Docker/Supabase CLI local. As migrations reais rodam em PGlite
   (Postgres WASM) com um *shim* mínimo dos esquemas `auth`/`storage` e papéis `anon`/`authenticated`, permitindo testar
@@ -55,7 +55,7 @@ Formato: **ID — decisão** · motivo · consequência.
   pendente/aprovado ou histórico de locação na sua locadora; recusados deixam de ser visíveis.
 - **D-020 — Assistente com Claude Opus 5.5 (`claude-opus-5-5`), esforço `low`, fallback server-side de recusa
   (`fallbacks: "default"`).** Contexto mínimo (sem CPF/CNH), rate limit 12/min e retorno ao roteiro em qualquer falha.
-- **D-021 — Redesign dos painéis (DESIGN.md v2) guiado pelo Impeccable (modo Operate).** Trilho azul-noite nos dois temas,
+- **D-021 — Redesign dos painéis (`docs/especificacao/DESIGN.md` v2) guiado pelo Impeccable (modo Operate).** Trilho azul-noite nos dois temas,
   Inter na interface e Sora só em títulos/números de destaque, sem eyebrows, "pulso da frota" como assinatura do proprietário
   e cartão do veículo (foto real ou ilustração vetorial tingida pela cor cadastrada) no app do locatário. `PageHeader.eyebrow`
   virou `meta` (identificador ao lado do título). Regras de negócio, consultas com RLS e rotas inalteradas.

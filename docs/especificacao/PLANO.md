@@ -1,6 +1,6 @@
 # Plano inicial de implementação
 
-**Regra:** Claude Code deve revisar este plano após inspecionar o repositório e executar automaticamente, sem parar no planejamento. Cada fase termina com testes e registro de evidências.
+**Regra:** o agente de desenvolvimento deve revisar este plano após inspecionar o repositório e executar automaticamente, sem parar no planejamento. Cada fase termina com testes e registro de evidências.
 
 1. **Discovery e fundação:** inventário de arquivos, decisões, dependências, `.env.example`, lint/typecheck/build, design tokens, layout, documentação inicial.
 2. **Banco, auth e RLS:** migrations, políticas, buckets, cadastro proprietário, convite, cadastro locatário, aprovação, múltiplos vínculos, admin.

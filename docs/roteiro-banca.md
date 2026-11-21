@@ -1,6 +1,6 @@
 # Roteiro de demonstração para a banca (~27 min)
 
-> O mesmo roteiro está navegável em `/demo` (setas ← →, cronômetro e atalhos). Só apresente como testado o que estiver marcado ✅ em `PROGRESS.md`.
+> O mesmo roteiro está navegável em `/demo` (setas ← →, cronômetro e atalhos). Só apresente como testado o que estiver marcado ✅ em `docs/planejamento/PROGRESS.md`.
 
 | # | Tempo | Etapa | Ação na tela | Fala sugerida |
 |---|---|---|---|---|

@@ -28,4 +28,4 @@ fundo + ícone `apple-touch-icon`), notificações push e sincronização em seg
 simulada offline). A tabela de manutenção não tem campo de prioridade; a "prioridade" é derivada do prazo (vencida, próxima).
 
 ## O que foi feito
-Ver `PROGRESS.md` → "Experiência PWA" e `DECISIONS.md` D-023 a D-026. Testes: `tests/e2e/pwa.spec.ts` e jornadas mobile em `tests/e2e/authenticated.spec.ts`.
+Ver `docs/planejamento/PROGRESS.md` → "Experiência PWA" e `docs/planejamento/DECISIONS.md` D-023 a D-026. Testes: `tests/e2e/pwa.spec.ts` e jornadas mobile em `tests/e2e/authenticated.spec.ts`.

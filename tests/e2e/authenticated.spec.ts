@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 
 /**
  * Jornadas autenticadas contra um projeto Supabase REAL com o seed aplicado (`npm run seed`).
- * Executa apenas com E2E_SUPABASE=1; caso contrário os testes são pulados (registrado em PROGRESS.md).
+ * Executa apenas com E2E_SUPABASE=1; caso contrário os testes são pulados (registrado em docs/planejamento/PROGRESS.md).
  */
 const enabled = process.env.E2E_SUPABASE === "1";
 test.skip(!enabled, "Defina E2E_SUPABASE=1 com Supabase configurado e seed aplicado.");

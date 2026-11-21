@@ -2,7 +2,7 @@ import Link from "next/link";
 import { MovixLogo, SLOGAN } from "@/components/brand";
 import { buttonClass } from "@/components/ui/primitives";
 
-/** Marketing usa tema escuro fixo (DESIGN.md). */
+/** Marketing usa tema escuro fixo (docs/especificacao/DESIGN.md). */
 export default function MarketingLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="dark min-h-dvh overflow-x-clip bg-[#03050b] text-fg">

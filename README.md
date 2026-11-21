@@ -43,4 +43,5 @@ Sem Supabase configurado, a landing e a demo pública funcionam normalmente. Pas
 - [Requisitos, casos de uso e matriz de testes](docs/requisitos-e-testes.md)
 - [Tecnologias, limitações e evolução](docs/limitacoes-e-tecnologias.md)
 - [Deploy](docs/deploy.md) · [Roteiro da banca](docs/roteiro-banca.md)
-- Planejamento: [`PLAN.md`](PLAN.md), [`PROGRESS.md`](PROGRESS.md), [`DECISIONS.md`](DECISIONS.md)
+- Planejamento: [`PLAN.md`](docs/planejamento/PLAN.md), [`PROGRESS.md`](docs/planejamento/PROGRESS.md), [`DECISIONS.md`](docs/planejamento/DECISIONS.md)
+- Especificação original do TCC: [`docs/especificacao/`](docs/especificacao/) · Índice completo: [`docs/README.md`](docs/README.md)

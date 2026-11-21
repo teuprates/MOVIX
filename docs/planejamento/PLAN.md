@@ -1,6 +1,6 @@
 # MOVIX — Plano de implementação revisado
 
-Revisão do `PLANO.md` após inventário (13/11/2026). Ambiente: Windows 11, Node 24, npm 11, Git. **Sem** Docker,
+Revisão do `docs/especificacao/PLANO.md` após inventário (13/11/2026). Ambiente: Windows 11, Node 24, npm 11, Git. **Sem** Docker,
 Supabase CLI global, GitHub CLI ou Vercel CLI; **sem** credenciais Supabase/GitHub/Vercel/IA. Logo de referência em
 `assets/movix-referencia.png` (M em fita azul-elétrico, wordmark MOVI branco + X azul, fundo preto/azul-noite).
 

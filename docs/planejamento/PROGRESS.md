@@ -42,7 +42,7 @@ Atualizado em: 13/11/2026
 
 ## Redesign dos painéis (13/11/2026)
 - Diretrizes do Impeccable lidas do repositório oficial (SKILL, modo Operate, craft floor, layout, tipografia, cor, movimento);
-  o plugin em si depende de `/plugin marketplace add pbakaus/impeccable` no Claude Code (ver resposta da sessão).
+  o plugin em si não foi instalado nem versionado no repositório.
 - Novos componentes: trilho agrupado, busca Ctrl K, menu "Novo", `FleetPulse`, `VehicleArt`, `RentalHero`, `DataTable`,
   `MetricStrip`/`Metric`, skeleton do locatário. Painel do proprietário e app do locatário reescritos; contratos com busca e
   ordenação; financeiro/multas com faixa de indicadores; frota com ilustração quando não há foto.
